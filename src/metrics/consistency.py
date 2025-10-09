@@ -5,7 +5,7 @@ from ..utils.registry import Registry
 @Registry.register_metric("Consistency")
 class Consistency(BaseMetric):
     name = "Consistency"
-    def compute(self, attributions, model, X, y):
+    def compute(self, attributions, model, X, y, gt=None):
         # run model twice with the same X and measure attribution similarity (cosine)
         # (in practice you'd compare across checkpoints or augmentations)
         eps = 1e-8

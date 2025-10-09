@@ -1,0 +1,30 @@
+seed: 42
+output_dir: "results"
+
+dataset:
+  name: "SwitchDataset"
+  params:
+    data_dir: "./data/simulated_switch_data"
+    x_train_pkl: "state_dataset_x_train.pkl"
+    x_test_pkl:  "state_dataset_x_test.pkl"
+    y_train_pkl: "state_dataset_y_train.pkl"
+    y_test_pkl:  "state_dataset_y_test.pkl"
+    transpose_to_t_first: true
+    cast_float32: true
+    cast_int64: true
+    limit_train: null
+    limit_test: null
+
+model:
+  name: "LSTM"
+  params:
+    input_dim: 6     # set to your D (features)
+    hidden_dim: 64
+    num_layers: 1
+    num_classes: 2   # set to your number of classes
+    lr: 1e-3
+    epochs: 3
+    batch_size: 64
+
+explainers: ["Grad","IG","LIME"]
+metrics: ["Faithfulness","Consistency","Stability"]

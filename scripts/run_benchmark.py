@@ -1,5 +1,5 @@
 import argparse
-from explainbench.runner import BenchmarkRunner
+from src.runner import BenchmarkRunner
 
 def main():
     ap = argparse.ArgumentParser()

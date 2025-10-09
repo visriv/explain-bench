@@ -8,7 +8,7 @@ class Faithfulness(BaseMetric):
     def __init__(self, k_ratio=0.2):
         self.k_ratio = k_ratio
 
-    def compute(self, attributions, model, X, y):
+    def compute(self, attributions, model, X, y, gt=None):
         # deletion metric: mask top-k attribution features over time and see prob drop
         import torch
         net = model.torch_module()

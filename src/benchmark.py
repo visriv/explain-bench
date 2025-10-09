@@ -14,6 +14,10 @@ class Benchmark:
         # fit once
         self.model.fit(X_train, y_train)
 
+        if hasattr(self.dataset, "load_aux"):
+            aux = self.dataset.load_aux() or {}
+        gt_test = aux.get("importance_test", None)
+
         rows = []
         for explainer in self.explainers:
             t0 = time.time()
@@ -27,7 +31,7 @@ class Benchmark:
 
             metric_vals = {}
             for m in self.metrics:
-                metric_vals.update(m.compute(attributions, self.model, X_test, y_test))
+                metric_vals.update(m.compute(attributions, self.model, X_test, y_test, gt=gt_test))
 
             row = {
                 "explainer": getattr(explainer, "name", explainer.__class__.__name__),
