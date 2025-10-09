@@ -1,0 +1,9 @@
+from abc import ABC, abstractmethod
+
+class BaseModel(ABC):
+    @abstractmethod
+    def fit(self, X_train, y_train): ...
+    @abstractmethod
+    def predict(self, X): ...
+    @abstractmethod
+    def torch_module(self): ...

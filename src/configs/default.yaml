@@ -1,0 +1,33 @@
+seed: 42
+output_dir: "results"
+
+dataset:
+  name: "SyntheticDataset"
+  params:
+    n_train: 800
+    n_test: 200
+    length: 100
+    features: 6
+    n_classes: 2
+    task: "classification"
+
+model:
+  name: "LSTM"
+  params:
+    input_dim: 6
+    hidden_dim: 64
+    num_layers: 1
+    num_classes: 2
+    lr: 1e-3
+    epochs: 3
+    batch_size: 64
+
+explainers:
+  - "Grad"
+  - "IG"
+  - "LIME"
+
+metrics:
+  - "Faithfulness"
+  - "Consistency"
+  - "Stability"
