@@ -20,7 +20,9 @@ class _TinyTransformer(nn.Module):
 class Transformer(BaseModel):
     def __init__(self, input_dim=6, d_model=64, nhead=4, num_layers=1, num_classes=2, lr=1e-3, epochs=3, batch_size=64, device=None):
         self.net = _TinyTransformer(input_dim, d_model, nhead, num_layers, num_classes)
-        self.lr=lr; self.epochs=epochs; self.batch_size=batch_size
+        self.lr = float(lr)
+        self.epochs = epochs
+        self.batch_size = batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.net.to(self.device)
 

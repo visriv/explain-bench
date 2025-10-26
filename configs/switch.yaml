@@ -1,5 +1,5 @@
 seed: 42
-output_dir: "results"
+output_dir: "run"
 
 dataset:
   name: "SwitchDataset"

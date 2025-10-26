@@ -3,7 +3,7 @@ from src.runner import BenchmarkRunner
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--config", default="explainbench/configs/default.yaml")
+    ap.add_argument("--config", default="configs/default.yaml")
     args = ap.parse_args()
     runner = BenchmarkRunner(args.config)
     runner.run()

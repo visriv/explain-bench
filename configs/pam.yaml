@@ -1,0 +1,21 @@
+seed: 42
+output_dir: "run/pam"
+
+dataset:
+  name: "PAM"
+  params:
+    base_path: "./data/PAM"
+    split_no: 1
+    gethalf: true
+
+model:
+  name: "LSTM"
+  params:
+    hidden_dim: 64
+    num_layers: 1
+    lr: 1e-3
+    epochs: 5
+    batch_size: 64
+
+explainers: ["Grad", "IG", "LIME"]
+metrics: ["Faithfulness", "GTAgreement", "TopKIoU"]

@@ -13,7 +13,7 @@ ExplainBench is a **modular and extensible benchmarking framework** for evaluati
 
 ```
 explain-bench/
-├── explainbench/
+├── src/
 │   ├── configs/          # YAML configs
 │   ├── datasets/         # loaders: synthetic, UCR (stub)
 │   ├── models/           # LSTM, Transformer
@@ -42,13 +42,13 @@ pip install -r requirements.txt && python setup.py develop
 ## 🧠 Quickstart
 
 ```bash
-python scripts/run_benchmark.py --config explainbench/configs/default.yaml
+python scripts/run_benchmark.py --config src/configs/default.yaml
 python scripts/visualize_results.py --input results/benchmark_results.csv
 ```
 
 ## 🧱 Add New Components
 
-See docstrings in `explainbench/utils/registry.py` and base classes in each submodule.
+See docstrings in `src/utils/registry.py` and base classes in each submodule.
 
 ## 📜 License
 

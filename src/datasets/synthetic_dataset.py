@@ -1,7 +1,7 @@
 import numpy as np
 from .base_dataset import BaseDataset
 from ..utils.registry import Registry
-
+from .common import SplitData
 @Registry.register_dataset("SyntheticDataset")
 class SyntheticDataset(BaseDataset):
     """Simple sinusoid + noise dataset for classification."""
@@ -21,3 +21,19 @@ class SyntheticDataset(BaseDataset):
 
     def load(self):
         return self._make(self.n_train), self._make(self.n_test)
+    
+
+    def load_full(self) -> SplitData:
+        (Xtr, ytr), (Xte, yte) = self.load()
+        # simple 80/20 split of train as val
+        n = Xtr.shape[0]
+        k = int(n * 0.8)
+        Xv, yv = Xtr[k:], ytr[k:]
+        Xtr, ytr = Xtr[:k], ytr[:k]
+        return SplitData(
+            train=(Xtr, None, ytr),
+            val=(Xv, None, yv),
+            test=(Xte, None, yte),
+            gt=None,
+            meta={"n_classes": self.n_classes, "input_dim": self.features, "max_len": self.length}
+        )

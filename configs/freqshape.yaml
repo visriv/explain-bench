@@ -1,0 +1,25 @@
+seed: 42
+output_dir: "run"
+
+dataset:
+  name: "FreqShape"
+  params:
+    base_path: "./data/FreqShape"  # where Timex expects data
+    split_no: 1
+
+model:
+  name: "Transformer"
+  params:
+    d_model: 64
+    nhead: 4
+    num_layers: 1
+    lr: 1e-3
+    epochs: 5
+    batch_size: 64
+
+explainers: ["Grad", "IG", "LIME"]
+metrics: ["Faithfulness", 
+          "Consistency",
+          # "GTAgreement", 
+          # "TopKIoU"
+          ]
