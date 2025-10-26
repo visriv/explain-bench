@@ -20,7 +20,9 @@ class LIMEExplainer(BaseExplainer):
         X_t = torch.tensor(X, dtype=torch.float32, device=device)
         with torch.no_grad():
             prob0 = net(X_t).softmax(-1)
+            prob0_np = prob0.detach().cpu().numpy()  
             tgt = prob0.argmax(dim=-1)
+            tgt_np = prob0.argmax(dim=-1).detach().cpu().numpy()  # (N,) numpy
 
         N,T,D = X.shape
         atts = np.zeros_like(X, dtype=np.float32)
@@ -29,9 +31,10 @@ class LIMEExplainer(BaseExplainer):
             Xp = X + noise
             with torch.no_grad():
                 probp = net(torch.tensor(Xp, dtype=torch.float32, device=device)).softmax(-1).cpu().numpy()
+                
             # contribution magnitude = |Δp(target)|; apportion by |noise|
             for i in range(N):
-                delta = abs(probp[i, tgt[i].item()] - prob0[i])
+                delta = abs(probp[i, tgt_np[i]] - prob0_np[i, tgt_np[i]])
                 w = np.abs(noise[i]) + 1e-6
                 atts[i] += (delta * w) / (self.samples)
         return atts
