@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "base_path": "FreqShape",
+    "split_no": 1
+  },
+  "explainer": {},
+  "model": {
+    "batch_size": 32,
+    "epochs": 5,
+    "lr": 0.001
+  }
+}

@@ -7,23 +7,23 @@ dataset:
     base_path: "./data/FreqShape"  # where Timex expects data
     split_no: 1
 
-model:
-  name: "Transformer"
-  params:
-    d_model: 64
-    nhead: 4
-    num_layers: 1
-    lr: 1e-3
-    epochs: 5
-    batch_size: 32
+models:
+  - name: "Transformer"
+    params:
+      d_model: 64
+      nhead: 4
+      num_layers: 1
+      lr: 1e-3
+      epochs: 5
+      batch_size: 32
 
-  name: "LSTM"
-  params:
-    hidden_dim: 64
-    num_layers: 1
-    lr: 1e-3
-    epochs: 5
-    batch_size: 32
+  - name: "LSTM"
+    params:
+      hidden_dim: 64
+      num_layers: 1
+      lr: 1e-3
+      epochs: 5
+      batch_size: 32
 
 explainers: ["Grad", 
             # "IG", 
