@@ -69,6 +69,8 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 
 | Dataset           | # of Samples | Length | Dimension | Classes | Task                       |
 |-------------------|:------------:|:------:|:---------:|:-------:|----------------------------|
+| **State**         | 1000         | 200    | 3         | 2       | Binary classification      |
+| **Switch-Feature**| 1000         | 100    | 3         | 2       | Binary classification      |
 | **FreqShapes**    | 6,100        | 50     | 1         | 4       | Multi‑classification       |
 | **SeqComb‑UV**    | 6,100        | 200    | 1         | 4       | Multi‑classification       |
 | **SeqComb‑MV**    | 6,100        | 200    | 4         | 4       | Multi‑classification       |
@@ -90,7 +92,7 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 
 | Dataset | Status | Web Source | Reference |
 |--------|:------:|------------|-----------|
-| State | ✅ 🧪 In progress | [link][State-src] | [ref][State-ref] |
+| State |  🧪 In progress | [link][State-src] | [ref][State-ref] |
 | Switch-Feature | 🧪 In progress | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
 | SeqComb‑UV | 🧪 In progress | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
@@ -105,16 +107,16 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 | Water      | ⏳ Planned     | [link][water-src]     | [ref][water-ref]     |
 
 <!-- Replace the placeholders below with real URLs/citations -->
-[State-src]: #
-[Switch-src]: #
-[freqshape-src]: #
-[seqcombuv-src]: #
-[seqcombmv-src]: #
-[lowvar-src]: #
-[ecg-src]: #
-[pam-src]: #
-[epilepsy-src]: #
-[boiler-src]: #
+[State-src]: https://github.com/visriv/explain-bench/blob/main/src/datasets/datagen/state_data.py#
+[Switch-src]: https://github.com/visriv/explain-bench/blob/main/src/datasets/datagen/switch_data.py#
+[freqshape-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ# 
+[seqcombuv-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[seqcombmv-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[lowvar-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[ecg-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[pam-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[epilepsy-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
+[boiler-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ#
 [wafer-src]: #
 [freezer-src]: #
 [water-src]: #
