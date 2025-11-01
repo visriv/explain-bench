@@ -65,7 +65,7 @@ class BenchmarkRunner:
         explainers = [Registry.get_explainer(n)() for n in self.cfg['explainers']]
         metrics = [Registry.get_metric(n)() for n in self.cfg['metrics']]
 
-        outdir = self.cfg.get('output_dir', 'results')
+        outdir = self.cfg.get('output_dir', 'runs')
         ensure_dir(outdir)
 
         from .benchmark import Benchmark

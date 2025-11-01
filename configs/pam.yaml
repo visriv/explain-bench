@@ -1,21 +1,35 @@
 seed: 42
-output_dir: "run/pam"
+output_dir: "runs"
 
 dataset:
   name: "PAM"
   params:
-    base_path: "./data/PAM"
-    split_no: 1
-    gethalf: true
+    base_path: "./data/PAM" 
+    gethalf: True
+models:
+  - name: "Transformer"
+    params:
+      d_model: 64
+      nhead: 4
+      num_layers: 1
+      lr: 1e-3
+      epochs: 5
+      batch_size: 32
+      num_classes: 8
 
-model:
-  name: "LSTM"
-  params:
-    hidden_dim: 64
-    num_layers: 1
-    lr: 1e-3
-    epochs: 5
-    batch_size: 64
+  - name: "LSTM"
+    params:
+      hidden_dim: 64
+      num_layers: 1
+      lr: 1e-3
+      epochs: 5
+      batch_size: 32
 
-explainers: ["Grad", "IG", "LIME"]
-metrics: ["Faithfulness", "GTAgreement", "TopKIoU"]
+explainers: ["Grad", 
+            # "IG", 
+            "LIME"]
+metrics: ["Faithfulness", 
+          "Consistency",
+          # "GTAgreement", 
+          # "TopKIoU"
+          ]

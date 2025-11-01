@@ -1,11 +1,11 @@
 seed: 42
-output_dir: "run"
+output_dir: "runs"
 
 dataset:
   name: "FreqShape"
   params:
     base_path: "./data/FreqShape"  # where Timex expects data
-    split_no: 1
+    split_no: 2
 
 models:
   - name: "Transformer"

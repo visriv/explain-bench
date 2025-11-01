@@ -39,7 +39,43 @@ def _as_model_list(model_or_models) -> List[Any]:
 def ensure_dir(path: str):
     os.makedirs(path, exist_ok=True)
 
+def _flat_with_prefix(prefix: str, d: dict) -> dict:
+    """Turn {'a':1,'b':2} into {f'{prefix}a':1, f'{prefix}b':2} (None -> '')."""
+    if not isinstance(d, dict):
+        # print('reached here')
+        # print(prefix)
+        return {}
+    out = {}
+    for k, v in d.items():
+        out[f"{prefix}{k}"] = "" if v is None else v
+    return out
 
+def _ensure_tsv_header(tsv_path: str, new_cols: list[str]) -> list[str]:
+    """
+    Ensure TSV has a header that includes all `new_cols`.
+    - If file doesn't exist: create with these columns.
+    - If exists: append any missing columns to the header (rewrite only the first line).
+    Returns the final ordered list of columns.
+    """
+    if not os.path.isfile(tsv_path):
+        with open(tsv_path, "w", encoding="utf-8") as f:
+            f.write("\t".join(new_cols) + "\n")
+        return new_cols
+
+    # Read existing header
+    with open(tsv_path, "r", encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    if not lines:
+        lines = [""]
+
+    old_cols = lines[0].split("\t") if lines[0] else []
+    add_cols = [c for c in new_cols if c not in old_cols]
+    if add_cols:
+        lines[0] = "\t".join(old_cols + add_cols)
+        with open(tsv_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + ("\n" if lines and lines[-1] != "" else ""))
+        return old_cols + add_cols
+    return old_cols
 
 
 def dump_json(obj: Dict[str, Any], path: str):
@@ -55,15 +91,29 @@ class Benchmark:
         self.output_dir = output_dir
 
     def run(self) -> List[Dict[str, Any]]:
+
+
+
         log.info("⚙️  Loading dataset splits…")
         t0 = time.time()
         (Xtr, ytr, _), (Xv, yv, _), (Xte, yte, _), gt = self.dataset.load_splits()
         # build nested run root: runs/<DATA_DIR>/...
         data_dir_rel, data_cfg = dataset_signature(self.dataset)
-        run_root = os.path.join("runs", data_dir_rel)
+        run_root = os.path.join(self.output_dir, data_dir_rel)
         ensure_dir(run_root)
         print('RUN ROOT: ', run_root)
         log.info("✅ Dataset loaded in %.2fs", time.time() - t0)
+
+        tsv_path = os.path.join(run_root, "results.tsv")
+        if not os.path.isfile(tsv_path):
+            with open(tsv_path, "w", encoding="utf-8") as f:
+                f.write("\t".join([
+                    "data", "data_params",
+                    "model", "model_params",
+                    "explainer", "explainer_params",
+                    "time_sec", "metrics_json"
+                ]) + "\n")
+
         if gt:
             log.info("   • GT available")
         else:
@@ -99,8 +149,8 @@ class Benchmark:
                 log.info(f"[model] saved checkpoint → {ckpt_path}")
 
             # quick sanity validation after load/train
-            validate_classifier(mdl, Xv, yv, logger=log)
-
+            val_out = validate_classifier(mdl, Xv, yv, logger=log)
+            print(val_out)
 
 
 
@@ -143,6 +193,30 @@ class Benchmark:
                                        else f"{k}={pretty[k]}" for k in pretty),
                              metric_time)
                     metric_vals.update(vals)
+
+                    # --- build a flat row: core identifiers + flattened params + flattened metrics
+                    flat_row = {
+                        "data": data_dir_rel,
+                        "model": mname,
+                        "explainer": expl_name,
+                        "time_sec": f"{expl_elapsed:.6f}",
+                    }
+                    flat_row.update(_flat_with_prefix("data_", data_cfg))       # e.g., data_base_path, data_split_no
+                    flat_row.update(_flat_with_prefix("model_", model_cfg))     # e.g., model_lr, model_epochs, model_batch_size
+                    flat_row.update(_flat_with_prefix("expl_", expl_cfg))       # e.g., expl_sigma, expl_samples
+                    flat_row.update(_flat_with_prefix("metric_", metric_vals))  # e.g., metric_faithfulness_drop, metric_consistency_cos
+                    flat_row.update(_flat_with_prefix("", val_out))  # e.g., pr, auprc, auroc
+
+                    # Establish TSV path once per dataset
+                    tsv_path = os.path.join(run_root, "results.tsv")
+
+                    # Ensure header includes all current columns (append missing ones in-place)
+                    header = _ensure_tsv_header(tsv_path, list(flat_row.keys()))
+
+                    # Write the row in header order (fill missing keys with "")
+                    with open(tsv_path, "a", encoding="utf-8") as f:
+                        f.write("\t".join(str(flat_row.get(col, "")) for col in header) + "\n")
+                    print('written metrics to {run_root}/{tsv_path}')
 
                 rows.append({
                     "model": mname,

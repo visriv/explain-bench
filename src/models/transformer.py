@@ -68,57 +68,57 @@ class Transformer(BaseModel):
             logits = self.net(X)
             return logits.argmax(dim=-1).cpu().numpy()
 
-    def validate(self, Xva, yva, batch_size: int = 32):
-        """
-        Run validation on (Xva, yva), print metrics, and return a dict.
-        - Supports binary (1-logit or 2-logit) and multiclass.
-        - Uses batched inference to keep memory modest.
-        """
-        if Xva is None or yva is None:
-            print("[val] skipped (no validation split provided)")
-            return None
+    # def validate(self, Xva, yva, batch_size: int = 32):
+    #     """
+    #     Run validation on (Xva, yva), print metrics, and return a dict.
+    #     - Supports binary (1-logit or 2-logit) and multiclass.
+    #     - Uses batched inference to keep memory modest.
+    #     """
+    #     if Xva is None or yva is None:
+    #         print("[val] skipped (no validation split provided)")
+    #         return None
 
-        self.net.eval()
-        device = self.device
+    #     self.net.eval()
+    #     device = self.device
 
-        # --- batched forward to collect logits ---
-        with torch.no_grad():
-            N = len(Xva)
-            bs = batch_size or N
-            logits_list = []
-            for i in range(0, N, bs):
-                Xb = torch.from_numpy(Xva[i:i+bs]).float().to(device)
-                logits_b = self.net(Xb)   # (B, C) or (B, 1)
-                logits_list.append(logits_b.detach().cpu())
-            logits = torch.cat(logits_list, dim=0)              # (N, C) or (N, 1)
+    #     # --- batched forward to collect logits ---
+    #     with torch.no_grad():
+    #         N = len(Xva)
+    #         bs = batch_size or N
+    #         logits_list = []
+    #         for i in range(0, N, bs):
+    #             Xb = torch.from_numpy(Xva[i:i+bs]).float().to(device)
+    #             logits_b = self.net(Xb)   # (B, C) or (B, 1)
+    #             logits_list.append(logits_b.detach().cpu())
+    #         logits = torch.cat(logits_list, dim=0)              # (N, C) or (N, 1)
 
-        # predicted labels
-        if logits.shape[1] == 1:
-            # single-logit binary: threshold at 0.5 on sigmoid
-            probs = torch.sigmoid(logits).numpy().ravel()       # (N,)
-            preds = (probs >= 0.5).astype(np.int64)
-        else:
-            # C >= 2
-            probs_full = F.softmax(logits, dim=1).cpu().numpy()  # (N, C)
-            preds = probs_full.argmax(axis=1).astype(np.int64)
-            # if exactly 2 classes, keep positive-class prob for AUROC
-            probs = probs_full[:, 1] if probs_full.shape[1] == 2 else None
+    #     # predicted labels
+    #     if logits.shape[1] == 1:
+    #         # single-logit binary: threshold at 0.5 on sigmoid
+    #         probs = torch.sigmoid(logits).numpy().ravel()       # (N,)
+    #         preds = (probs >= 0.5).astype(np.int64)
+    #     else:
+    #         # C >= 2
+    #         probs_full = F.softmax(logits, dim=1).cpu().numpy()  # (N, C)
+    #         preds = probs_full.argmax(axis=1).astype(np.int64)
+    #         # if exactly 2 classes, keep positive-class prob for AUROC
+    #         probs = probs_full[:, 1] if probs_full.shape[1] == 2 else None
 
-        y_true = np.asarray(yva)
+    #     y_true = np.asarray(yva)
 
-        prec = precision_score(y_true, preds, average="macro", zero_division=0)
-        rec  = recall_score(y_true, preds, average="macro", zero_division=0)
-        f1   = f1_score(y_true, preds, average="macro", zero_division=0)
-        auroc = float("nan")
-        if probs is not None and len(np.unique(y_true)) == 2:
-            try:
-                auroc = roc_auc_score(y_true, probs)
-            except Exception:
-                auroc = float("nan")
+    #     prec = precision_score(y_true, preds, average="macro", zero_division=0)
+    #     rec  = recall_score(y_true, preds, average="macro", zero_division=0)
+    #     f1   = f1_score(y_true, preds, average="macro", zero_division=0)
+    #     auroc = float("nan")
+    #     if probs is not None and len(np.unique(y_true)) == 2:
+    #         try:
+    #             auroc = roc_auc_score(y_true, probs)
+    #         except Exception:
+    #             auroc = float("nan")
 
-        print(f"[val] precision={prec:.3f}  recall={rec:.3f}  f1={f1:.3f}  auroc={auroc:.3f}")
+    #     print(f"[val] precision={prec:.3f}  recall={rec:.3f}  f1={f1:.3f}  auroc={auroc:.3f}")
 
-        return {"val_precision": prec, "val_recall": rec, "val_f1": f1, "val_auroc": auroc}
+    #     return {"val_precision": prec, "val_recall": rec, "val_f1": f1, "val_auroc": auroc}
     
     def torch_module(self):
         return self.net

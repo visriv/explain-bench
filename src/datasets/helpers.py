@@ -15,8 +15,8 @@ def _TNDtoNTD(x: torch.Tensor | np.ndarray) -> np.ndarray:
         x = x.detach().cpu().numpy()
     x = np.asarray(x)
     assert x.ndim == 3, f"expected 3D, got {x.shape}"
-    if x.shape[0] <= x.shape[1]:  # (T,N,D)
-        x = np.transpose(x, (1,0,2))
+    # if x.shape[0] <= x.shape[1]:  # (T,N,D)
+    x = np.transpose(x, (1,0,2))
     return x.astype("float32", copy=False)
 
 def _TNtoNT(x: torch.Tensor | np.ndarray) -> np.ndarray:
@@ -25,6 +25,6 @@ def _TNtoNT(x: torch.Tensor | np.ndarray) -> np.ndarray:
         x = x.detach().cpu().numpy()
     x = np.asarray(x)
     assert x.ndim == 2
-    if x.shape[0] <= x.shape[1]:  # (T,N) -> (N,T)
-        x = np.transpose(x, (1,0))
+    # if x.shape[0] <= x.shape[1]:  # (T,N) -> (N,T)
+    x = np.transpose(x, (1,0))
     return x.astype("float32", copy=False)
