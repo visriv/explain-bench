@@ -1,0 +1,35 @@
+seed: 42
+output_dir: "runs"
+
+dataset:
+  name: "SeqCombUV"
+  params:
+    base_path: "./data/SeqCombSingleBetter"  # where Timex expects data
+    split_no: 1
+
+models:
+  - name: "Transformer"
+    params:
+      d_model: 64
+      nhead: 4
+      num_layers: 1
+      lr: 1e-3
+      epochs: 50
+      batch_size: 32
+
+  - name: "LSTM"
+    params:
+      hidden_dim: 64
+      num_layers: 1
+      lr: 1e-3
+      epochs: 100
+      batch_size: 32
+
+explainers: ["Grad", 
+            # "IG", 
+            "LIME"]
+metrics: ["Faithfulness", 
+          "Consistency",
+          # "GTAgreement", 
+          # "TopKIoU"
+          ]

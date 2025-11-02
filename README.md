@@ -95,11 +95,11 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 | State |  🧪 In progress | [link][State-src] | [ref][State-ref] |
 | Switch-Feature | 🧪 In progress | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
-| SeqComb‑UV | 🧪 In progress | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
+| SeqComb‑UV | ✅ Implemented | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
 | SeqComb‑MV | 🧪 In progress | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
 | LowVar     | 🧪 In progress | [link][lowvar-src]    | [ref][lowvar-ref]    |
 | ECG        | 🧪 In progress | [link][ecg-src]       | [ref][ecg-ref]       |
-| PAM        | 🧪 In progress | [link][pam-src]       | [ref][pam-ref]       |
+| PAM        | ✅ Implemented | [link][pam-src]       | [ref][pam-ref]       |
 | Epilepsy   | 🧪 In progress | [link][epilepsy-src]  | [ref][epilepsy-ref]  |
 | Boiler     | 🧪 In progress | [link][boiler-src]    | [ref][boiler-ref]    |
 | Wafer      | ⏳ Planned     | [link][wafer-src]     | [ref][wafer-ref]     |
