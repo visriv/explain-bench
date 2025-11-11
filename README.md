@@ -33,11 +33,28 @@ explain-bench/
 
 ## ⚙️ Install
 
-```bash
+
+Install TimeSynth from source
+
+```
+git clone https://github.com/TimeSynth/TimeSynth.git
+cd TimeSynth
+python setup.py install
+cd ..
 pip install -e .
-# or
+```
+```bash
 pip install -r requirements.txt && python setup.py develop
 ```
+
+
+
+## Download or generate datasets
+Put the datasets into explain-bench/data/
+For e.g., explain-bench/data/FreqShape/
+
+They can be either downloaded or generated synthetically. The source is mentioned in the WebSource column of the Table in Appendix > Dataset Tracking
+
 
 ## 🧠 Quickstart
 
