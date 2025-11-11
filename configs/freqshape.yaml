@@ -26,11 +26,22 @@ models:
       batch_size: 32
     single_label: True
 
-explainers: ["Grad", 
-            # "IG", 
-            "LIME"]
-metrics: ["Faithfulness", 
-          "Consistency",
-          # "GTAgreement", 
-          # "TopKIoU"
-          ]
+explainers: 
+  - name: "Grad"
+    params:
+  # - name: "IG"
+  #   params:
+  #     steps: 30
+  - name: "LIME"
+    params:
+
+metrics: 
+  - name: "Faithfulness"
+    params:
+      k_ratio: [0.2, 0.3, 0.4, 0.5]
+  - name: "Consistency"
+    params:
+      # k_ratio: 0.2
+  - name: "Stability"
+    params:
+      # k_ratio: 0.2

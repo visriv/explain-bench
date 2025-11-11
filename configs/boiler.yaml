@@ -2,10 +2,9 @@ seed: 42
 output_dir: "runs"
 
 dataset:
-  name: "PAM"
+  name: "Boiler"
   params:
-    base_path: "./data/PAM" 
-    gethalf: True
+    base_path: "./data/Boiler" 
 models:
   - name: "Transformer"
     params:

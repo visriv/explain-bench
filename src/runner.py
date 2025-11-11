@@ -77,13 +77,36 @@ class BenchmarkRunner:
         dataset = self._build_dataset()
         models_obj = self._build_models(dataset)
 
-        explainers = [Registry.get_explainer(n)() for n in self.cfg['explainers']]
-        metrics = [Registry.get_metric(n)() for n in self.cfg['metrics']]
+        explainers = []
+        for exp in self.cfg['explainers']:
+            if isinstance(exp, dict):
+                name = exp.get('name')
+                params = exp.get('params', {}) or {}
+                cls = Registry.get_explainer(name)
+                explainers.append(cls(**params))
+            else:
+                # fallback if only string metric name given
+                cls = Registry.get_explainer(exp)
+                explainers.append(cls())
+
+
+        metrics = []
+        for m in self.cfg['metrics']:
+            if isinstance(m, dict):
+                name = m.get('name')
+                params = m.get('params', {}) or {}
+                cls = Registry.get_metric(name)
+                metrics.append(cls(**params))
+            else:
+                # fallback if only string metric name given
+                cls = Registry.get_metric(m)
+                metrics.append(cls())
+
 
         outdir = self.cfg.get('output_dir', 'runs')
         ensure_dir(outdir)
 
         from .benchmark import Benchmark
-        bm = Benchmark(dataset, models_obj, models_config=self.cfg['models'], explainers=explainers, metrics=metrics, output_dir=outdir)
+        bm = Benchmark(dataset, models_obj, config=self.cfg, explainers=explainers, metrics=metrics, output_dir=outdir)
         rows = bm.run()
         print('Results:', rows)

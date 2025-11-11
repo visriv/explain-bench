@@ -2,6 +2,7 @@ import random
 import torch
 import numpy as np
 import os
+import pandas as pd
 base_path = '/home/owq978/TimeSeriesXAI/PAMdata/PAMAP2data/'
 
 
@@ -148,3 +149,54 @@ def process_PAM(split_no = 1, device = None, base_path = base_path, gethalf = Fa
     test_chunk = PAMchunk(Ptest_tensor, Ptest_static_tensor, Ptest_time_tensor, ytest_tensor, device = device)
 
     return train_chunk, val_chunk, test_chunk
+
+
+boiler_base_path = "/n/data1/hms/dbmi/zitnik/lab/users/owq978/TimeSeriesCBM/datasets/Boiler"
+def process_Boiler_OLD(split_no = 1, device = None, base_path = boiler_base_path):
+    data = pd.read_csv(os.path.join(base_path, 'full.csv')).values
+    data = data[:, 2:]  #remove time step
+
+    window_size = 6
+    segments_length = [1, 2, 3, 4, 5, 6]
+
+    # Load path
+
+    print('positive sample size:',sum(data[:,-1]))
+    feature, label = [], []
+    for i in range(window_size - 1, len(data)):
+        label.append(data[i, -1])
+
+        sample = []
+        for length in segments_length:
+            a = data[(i- length + 1):(i + 1), :-1]
+            a = np.pad(a,pad_width=((0,window_size -length),(0,0)),mode='constant')# padding to [window_size, x_dim]
+            sample.append(a)
+
+        sample = np.array(sample)
+        sample = np.transpose(sample,axes=((2,0,1)))[:,:,:]
+
+        feature.append(sample)
+
+    feature, label = np.array(feature).astype(np.float32), np.array(label).astype(np.int32)
+
+    x_full = torch.tensor(feature.reshape(*feature.shape[:-2], -1)).permute(2,0,1)
+    y_full = torch.from_numpy(label)
+
+    # Make times:
+    T_full = torch.zeros(36, x_full.shape[1])
+    for i in range(T_full.shape[1]):
+        T_full[:,i] = torch.arange(36)
+
+    # Now split:
+    idx_train, idx_val, idx_test = torch.load(os.path.join(base_path, 'split={}.pt'.format(split_no)))
+    idx_train = idx_train.long()
+    idx_val = idx_val.long()
+    idx_test = idx_test.long()
+
+    x_full, T_full, y_full = x_full.to(device), T_full.to(device), y_full.to(device).long()
+
+    train_d = (x_full[:,idx_train,:], T_full[:,idx_train], y_full[idx_train])
+    val_d = (x_full[:,idx_val,:], T_full[:,idx_val], y_full[idx_val])
+    test_d = (x_full[:,idx_test,:], T_full[:,idx_test], y_full[idx_test])
+
+    return train_d, val_d, test_d

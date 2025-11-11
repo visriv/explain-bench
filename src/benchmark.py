@@ -5,8 +5,7 @@ import logging
 from typing import List, Dict, Any
 from src.utils.train_utils import train_classifier, validate_classifier
 from src.utils.path_utils import *
-import os, json, time, re
-
+import os, json, time, re, pickle
 # --- simple logging setup (idempotent) ---
 _LOG_FORMAT = "[%(asctime)s] %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=_LOG_FORMAT)
@@ -83,10 +82,16 @@ def dump_json(obj: Dict[str, Any], path: str):
         json.dump(obj, f, indent=2, sort_keys=True)
 
 class Benchmark:
-    def __init__(self, dataset, models, models_config, explainers, metrics, output_dir):
+    def __init__(self, 
+                 dataset, 
+                 models, 
+                 config, 
+                 explainers, 
+                 metrics, 
+                 output_dir):
         self.dataset = dataset
         self.models = models
-        self.models_config = models_config
+        self.config = config
         self.explainers = explainers
         self.metrics = metrics
         self.output_dir = output_dir
@@ -99,7 +104,8 @@ class Benchmark:
         t0 = time.time()
         (Xtr, ytr, _), (Xv, yv, _), (Xte, yte, _), gt = self.dataset.load_splits()
         # build nested run root: runs/<DATA_DIR>/...
-        data_dir_rel, data_cfg = dataset_signature(self.dataset)
+        data_dir_rel, _ = dataset_signature(self.dataset)
+        data_cfg = self.config['dataset']
         run_root = os.path.join(self.output_dir, data_dir_rel)
         ensure_dir(run_root)
         print('RUN ROOT: ', run_root)
@@ -109,10 +115,10 @@ class Benchmark:
         if not os.path.isfile(tsv_path):
             with open(tsv_path, "w", encoding="utf-8") as f:
                 f.write("\t".join([
-                    "data", "data_params",
-                    "model", "model_params",
-                    "explainer", "explainer_params",
-                    "time_sec", "metrics_json"
+                    "data", 
+                    "model", 
+                    "explainer", 
+                    "time_sec", 
                 ]) + "\n")
 
         if gt:
@@ -130,14 +136,15 @@ class Benchmark:
         for mname, mdl in _as_model_list(self.models):
             log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             # per-model directory: runs/<DATA>/<MODEL>/<HPs>/...
-            model_dir_rel, model_cfg = model_dir_name(mdl)
+            model_dir_rel, _ = model_dir_name(mdl)
+            model_cfg = next((m for m in self.config['models'] if m.get("name") == mname), {})
+
             model_dir = os.path.join(run_root, model_dir_rel)
             ensure_dir(model_dir)
             ckpt_path = os.path.join(model_dir, "checkpoint.pt")
 
             # Match config entry by model name
-            mcfg = next((m for m in self.models_config if m.get("name") == mname), {})
-            single_label = bool(mcfg.get("single_label", True))
+            single_label = bool(model_cfg.get("single_label", True))
 
             # Handle single_label if dataset labels are temporal
             if single_label and ytr.ndim == 2:
@@ -150,7 +157,7 @@ class Benchmark:
 
 
             # snapshot (once) for reproducibility
-            dump_json({"dataset": data_cfg, "model": model_cfg}, os.path.join(model_dir, "config.json"))
+            dump_json({"dataset": data_cfg, "model": model_cfg}, os.path.join(model_dir, "model_config.json"))
 
             if os.path.isfile(ckpt_path):
                 log.info(f"[model] found checkpoint for {mname} under '{data_dir_rel}', loading (skip training)…")
@@ -174,29 +181,45 @@ class Benchmark:
                      len(self.explainers), len(self.metrics))
             for explainer in self.explainers:
                 # per-explainer directory: runs/<DATA>/<MODEL>/<EXPL>/<params>/...
-                expl_dir_rel, expl_cfg = expl_dir_name(explainer)
+                expl_dir_rel, _ = expl_dir_name(explainer)
+                expl_cfg = next((e for e in self.config['explainers']))
+
                 expl_dir = os.path.join(model_dir, expl_dir_rel)
                 ensure_dir(expl_dir)
 
                 # save explainer config
                 dump_json({"dataset": data_cfg, "model": model_cfg, "explainer": expl_cfg},
                         os.path.join(expl_dir, "config.json"))
+                attr_path = os.path.join(expl_dir, "attributions.pkl")
 
-                # explain
-                expl_name = getattr(explainer, "name", explainer.__class__.__name__)
-                log.info("   ▶ Explainer: %s — generating attributions…", expl_name)
-                t_expl = time.time()
-                attributions = explainer.explain(mdl, Xte)
-                expl_elapsed = time.time() - t_expl
-                log.info("     • Done in %.2fs; attr shape %s", expl_elapsed, _shape(attributions))
+                if os.path.isfile(attr_path):
+                    log.info(f"[explainer] found cache for {expl_name} under '{data_dir_rel}', loading attributions (skip generation)…")
+                    with open(attr_path, "rb") as f:
+                        attributions = pickle.load(f)          # expected to be np.ndarray (N,T,D) or (N,D,T)
+                else:
+                    # explain
+                    expl_name = getattr(explainer, "name", explainer.__class__.__name__)
+                    log.info("   ▶ Explainer: %s — generating attributions…", expl_name)
+                    t_expl = time.time()
+                    attributions = explainer.explain(mdl, Xte)
+                    expl_elapsed = time.time() - t_expl
+                    log.info("     • Done in %.2fs; attr shape %s", expl_elapsed, _shape(attributions))
 
-                # Ensure (N,T,D)
-                if attributions.shape[1] != Xte.shape[1]:
-                    attributions = np.transpose(attributions, (0, 2, 1))
+                    # Ensure (N,T,D)
+                    if attributions.shape[1] != Xte.shape[1]:
+                        attributions = np.transpose(attributions, (0, 2, 1))
+
+                    with open(attr_path, "wb") as f:
+                        pickle.dump(attributions, f, protocol=pickle.HIGHEST_PROTOCOL)
+                    log.info("     • Saved attributions to %s", attr_path)
+
+
+
 
                 # Metrics
                 metric_vals: Dict[str, Any] = {}
                 for m in self.metrics:
+                    metric_cfg = next((me for me in self.config['metrics']))
                     mname_metric = getattr(m, "name", m.__class__.__name__)
                     log.info("     • Metric: %s …", mname_metric)
                     t_m = time.time()
@@ -216,9 +239,10 @@ class Benchmark:
                         "explainer": expl_name,
                         "time_sec": f"{expl_elapsed:.6f}",
                     }
-                    flat_row.update(_flat_with_prefix("data_", data_cfg))       # e.g., data_base_path, data_split_no
-                    flat_row.update(_flat_with_prefix("model_", model_cfg))     # e.g., model_lr, model_epochs, model_batch_size
-                    flat_row.update(_flat_with_prefix("expl_", expl_cfg))       # e.g., expl_sigma, expl_samples
+                    # flat_row.update(_flat_with_prefix("data_", data_cfg))       # e.g., data_base_path, data_split_no
+                    flat_row.update(_flat_with_prefix("model_", model_cfg['params']))     # e.g., model_lr, model_epochs, model_batch_size
+                    flat_row.update(_flat_with_prefix("expl_", expl_cfg['params']))       # e.g., expl_sigma, expl_samples
+                    flat_row.update(_flat_with_prefix("metric_", metric_cfg['params']))  # e.g., k_ratio
                     flat_row.update(_flat_with_prefix("metric_", metric_vals))  # e.g., metric_faithfulness_drop, metric_consistency_cos
                     flat_row.update(_flat_with_prefix("", val_out))  # e.g., pr, auprc, auroc
 
