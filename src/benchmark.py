@@ -134,6 +134,20 @@ class Benchmark:
             ensure_dir(model_dir)
             ckpt_path = os.path.join(model_dir, "checkpoint.pt")
 
+            # Match config entry by model name
+            mcfg = next((m for m in self.models_config if m.get("name") == mname), {})
+            single_label = bool(mcfg.get("single_label", True))
+
+            # Handle single_label if dataset labels are temporal
+            if single_label and ytr.ndim == 2:
+                log.info(f"[model] Using single-label mode (last timestep) for {mname}")
+                ytr = ytr[:, -1]
+                yv  = yv[:,  -1]
+                yte = yte[:, -1]
+            else:
+                ytr, yv, yte = ytr, yv, yte
+
+
             # snapshot (once) for reproducibility
             dump_json({"dataset": data_cfg, "model": model_cfg}, os.path.join(model_dir, "config.json"))
 

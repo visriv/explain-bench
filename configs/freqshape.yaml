@@ -16,7 +16,7 @@ models:
       lr: 1e-3
       epochs: 5
       batch_size: 32
-
+    single_label: True
   - name: "LSTM"
     params:
       hidden_dim: 64
@@ -24,6 +24,7 @@ models:
       lr: 1e-3
       epochs: 5
       batch_size: 32
+    single_label: True
 
 explainers: ["Grad", 
             # "IG", 
