@@ -109,8 +109,8 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 
 | Dataset | Status | Web Source | Reference |
 |--------|:------:|------------|-----------|
-| State |  🧪 In progress | [link][State-src] | [ref][State-ref] |
-| Switch-Feature | 🧪 In progress | [link][Switch-src] | [ref][Switch-ref] |
+| State |  ✅ Implemented  | [link][State-src] | [ref][State-ref] |
+| Switch-Feature | ✅ Implemented  | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
 | SeqComb‑UV | ✅ Implemented | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
 | SeqComb‑MV | 🧪 In progress | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
@@ -118,7 +118,7 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 | ECG        | 🧪 In progress | [link][ecg-src]       | [ref][ecg-ref]       |
 | PAM        | ✅ Implemented | [link][pam-src]       | [ref][pam-ref]       |
 | Epilepsy   | 🧪 In progress | [link][epilepsy-src]  | [ref][epilepsy-ref]  |
-| Boiler     | 🧪 In progress | [link][boiler-src]    | [ref][boiler-ref]    |
+| Boiler     | ✅ Implemented | [link][boiler-src]    | [ref][boiler-ref]    |
 | Wafer      | ⏳ Planned     | [link][wafer-src]     | [ref][wafer-ref]     |
 | FreezerRegular | ⏳ Planned | [link][freezer-src]   | [ref][freezer-ref]   |
 | Water      | ⏳ Planned     | [link][water-src]     | [ref][water-ref]     |
