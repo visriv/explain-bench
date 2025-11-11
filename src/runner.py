@@ -6,10 +6,25 @@ from . import datasets  # ensure registries are populated
 from . import models, explanations, metrics
 from typing import Any, Dict, List
 
+import pkgutil, importlib, pathlib
+
+def _eager_import_datasets():
+    pkg_name = "src.datasets"
+    pkg_path = pathlib.Path(__file__).parent / "datasets"
+    for _, modname, ispkg in pkgutil.iter_modules([str(pkg_path)]):
+        if ispkg:
+            continue
+        if modname.startswith(("_", "base_", "helpers", "handlers")):
+            continue
+        importlib.import_module(f"{pkg_name}.{modname}")
+
+
+
 class BenchmarkRunner:
     def __init__(self, config_path):
         with open(config_path, 'r') as f:
             self.cfg = yaml.safe_load(f)
+        _eager_import_datasets()
 
     def _build_dataset(self):
         dname = self.cfg['dataset']['name']
@@ -69,6 +84,6 @@ class BenchmarkRunner:
         ensure_dir(outdir)
 
         from .benchmark import Benchmark
-        bm = Benchmark(dataset, models_obj, explainers, metrics, outdir)
+        bm = Benchmark(dataset, models_obj, models_config=self.cfg['models'], explainers=explainers, metrics=metrics, output_dir=outdir)
         rows = bm.run()
         print('Results:', rows)

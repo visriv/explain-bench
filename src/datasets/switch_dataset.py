@@ -76,9 +76,9 @@ class SwitchDataset(BaseDataset):
         if X.ndim != 3:
             raise ValueError(f"Expected 3D array for X, got shape {X.shape}")
         N, a, b = X.shape
-        # Heuristic: if a < b, we assume a=T, b=D already; otherwise swap.
+        # Heuristic: if b > a, we assume a=D, b=T, hence swap; otherwise okay.
         # You can also remove heuristic and rely solely on self.transpose_to_t_first.
-        if self.transpose_to_t_first and a > b:
+        if self.transpose_to_t_first and b > a:
             X = X.transpose(0, 2, 1)
         return X
 
@@ -135,7 +135,29 @@ class SwitchDataset(BaseDataset):
         X_test,  y_test  = self._load_xy(self.paths["x_test"],  self.paths["y_test"],  self.limit_test)
 
         # Optional: sanity checks
-        assert X_train.ndim == 3 and X_test.ndim == 3, "X must be (N, T, D)"
-        assert y_train.ndim == 1 and y_test.ndim == 1, "y must be (N,)"
+        assert X_train.ndim == 3 and X_test.ndim == 3, "X must be (N, T, D) or (N, D, T)"
+        # assert y_train.ndim == 1 and y_test.ndim == 1, "y must be (N,)"
 
         return (X_train, y_train), (X_test, y_test)
+
+    def load_splits(self):
+        """
+        Compatibility wrapper for ExplainBench's unified dataset API.
+        Returns (train, val, test, gt) where each is a tuple (X, y, T)
+        and gt may include optional arrays like importance maps.
+        """
+        (Xtr, ytr), (Xte, yte) = self.load()
+
+        # No explicit timestamps, so use index range as dummy time.
+        Ttr = np.arange(Xtr.shape[1])[None, :].repeat(Xtr.shape[0], axis=0)
+        Tte = np.arange(Xte.shape[1])[None, :].repeat(Xte.shape[0], axis=0)
+
+        # We don’t have a validation set — use a small subset of train as val.
+        n_val = max(1, int(0.1 * len(Xtr)))
+        Xv, yv, Tv = Xtr[:n_val], ytr[:n_val], Ttr[:n_val]
+        Xtr, ytr, Ttr = Xtr[n_val:], ytr[n_val:], Ttr[n_val:]
+
+        gt = self.load_aux() or None
+
+        return (Xtr, ytr, Ttr), (Xv, yv, Tv), (Xte, yte, Tte), gt
+

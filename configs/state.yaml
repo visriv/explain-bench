@@ -2,9 +2,9 @@ seed: 42
 output_dir: "run"
 
 dataset:
-  name: "SwitchDataset"
+  name: "StateDataset"
   params:
-    data_dir: "./data/simulated_switch_data"
+    data_dir: "./data/simulated_state_data"
     x_train_pkl: "state_dataset_x_train.pkl"
     x_test_pkl:  "state_dataset_x_test.pkl"
     y_train_pkl: "state_dataset_y_train.pkl"

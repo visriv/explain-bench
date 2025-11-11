@@ -1,0 +1,74 @@
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+.idea/
+.vscode/
+.history/
+
+# --- Python cache/artifacts ---
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Builds / packaging ---
+build/
+dist/
+site/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# --- Environments ---
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.poetry/
+.poetry-cache/
+
+# --- Logs / temp ---
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+runs/
+# --- Data & results (keep code small; track data/README.md if any) ---
+data/
+!data/.gitkeep
+!data/README.md
+results/
+outputs/
+reports/
+checkpoints/
+lightning_logs/
+
+# --- Large artifacts / models ---
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+
+# --- Pickles & caches (avoid committing generated files) ---
+*.pkl
+*.npz
+
+# If you want to commit *only* code pickles, but ignore dataset pickles:
+# data/**/*.pkl
+
+# --- Notebooks exports ---
+*.nbconvert*

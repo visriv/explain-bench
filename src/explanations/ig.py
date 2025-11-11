@@ -13,5 +13,11 @@ class IGExplainer(BaseExplainer):
         ig = IntegratedGradients(net)
         X_t = torch.tensor(X, dtype=torch.float32, device=device)
         baseline = torch.zeros_like(X_t)
-        attrs = ig.attribute(X_t, baselines=baseline, n_steps=steps)
+        # Forward pass to pick top predicted class for each sample
+        with torch.no_grad():
+            logits = net(X_t)
+            target = logits.argmax(dim=1)
+
+        # Integrated gradients attribution for that target
+        attrs = ig.attribute(X_t, baselines=baseline, n_steps=steps, target=target)
         return attrs.detach().cpu().numpy()

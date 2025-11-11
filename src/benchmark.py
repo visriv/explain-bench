@@ -83,9 +83,10 @@ def dump_json(obj: Dict[str, Any], path: str):
         json.dump(obj, f, indent=2, sort_keys=True)
 
 class Benchmark:
-    def __init__(self, dataset, models, explainers, metrics, output_dir):
+    def __init__(self, dataset, models, models_config, explainers, metrics, output_dir):
         self.dataset = dataset
         self.models = models
+        self.models_config = models_config
         self.explainers = explainers
         self.metrics = metrics
         self.output_dir = output_dir
@@ -120,7 +121,7 @@ class Benchmark:
             log.info("   • GT not available")
 
         rows = []
-        gt_test = None if not gt else (gt.get("importance_test") or gt.get("importance_train"))
+        gt_test = None if not gt else (gt.get("importance_test"))# or gt.get("importance_train"))
         if gt_test is not None:
             log.info("   • Using GT for metrics: %s",
                      "importance_test" if "importance_test" in gt else "importance_train")
@@ -134,6 +135,12 @@ class Benchmark:
             ensure_dir(model_dir)
             ckpt_path = os.path.join(model_dir, "checkpoint.pt")
 
+            # choose single label (last timestep) or multi-label training
+            if self.models_config.get('single_label', True):
+                ytr = ytr[:, -1]
+                yv = yv[:, -1]
+                yte = yte[:, -1]
+            
             # snapshot (once) for reproducibility
             dump_json({"dataset": data_cfg, "model": model_cfg}, os.path.join(model_dir, "config.json"))
 
