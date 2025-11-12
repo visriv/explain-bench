@@ -15,10 +15,10 @@ ExplainBench is a **modular and extensible benchmarking framework** for evaluati
 explain-bench/
 ├── src/
 │   ├── configs/          # YAML configs
-│   ├── datasets/         # loaders: synthetic, UCR (stub)
+│   ├── datasets/         # loaders
 │   ├── models/           # LSTM, Transformer
-│   ├── explanations/     # Grad, IG, LIME (simple)
-│   ├── metrics/          # Faithfulness, Consistency, Stability
+│   ├── explanations/     # 
+│   ├── metrics/          # Faithfulness, Comprehensiveness, Sufficiency, AUROC, AUPRC
 │   ├── visualization/    # plotting & reporting
 │   ├── utils/            # registry, config, logging
 │   ├── benchmark.py      # core benchmark loop
@@ -71,6 +71,31 @@ See docstrings in `src/utils/registry.py` and base classes in each submodule.
 
 MIT
 
+
+## TODO:
+
+### [ ] Models
+- [ ] GradShap  
+- [ ] DeepLIFT  
+- [ ] WinIT  
+- [ ] FIT  
+- [ ] Dynamask / ExtrMask  
+- [ ] TimeX  
+- [ ] TimeX++  
+- [ ] ORTE  
+- [ ] ContraLSP  
+- [ ] TimeSHAP / WindowSHAP  
+
+---
+
+### [ ] Metrics
+- [ ] AUROC, AUP, AUR, AUPRC *(for datasets with ground truth explanations available)*  
+- [ ] for realworld datasets, choose k \in [0.1, 0.2, 0.3, …, 0.9] and calculate
+- [x] Faithfulness (drop in probability)
+- [ ] Comprehensiveness  
+- [ ] Sufficiency  
+- [ ] Accuracy  
+- [ ] Cross Entropy 
 
 # Appendix
 
