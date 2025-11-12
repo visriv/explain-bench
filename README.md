@@ -113,7 +113,7 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 | Switch-Feature | ✅ Implemented  | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
 | SeqComb‑UV | ✅ Implemented | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
-| SeqComb‑MV | 🧪 In progress | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
+| SeqComb‑MV | ✅ Implemented | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
 | LowVar     | 🧪 In progress | [link][lowvar-src]    | [ref][lowvar-ref]    |
 | ECG        | 🧪 In progress | [link][ecg-src]       | [ref][ecg-ref]       |
 | PAM        | ✅ Implemented | [link][pam-src]       | [ref][pam-ref]       |
