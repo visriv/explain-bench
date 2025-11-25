@@ -90,12 +90,12 @@ MIT
 
 ### [ ] Metrics
 - [ ] AUROC, AUP, AUR, AUPRC *(for datasets with ground truth explanations available)*  
-- [ ] for realworld datasets, choose k \in [0.1, 0.2, 0.3, …, 0.9] and calculate
+- [x] for realworld datasets, choose k \in [0.1, 0.2, 0.3, …, 0.9] and calculate
 - [x] Faithfulness (drop in probability)
-- [ ] Comprehensiveness  
-- [ ] Sufficiency  
-- [ ] Accuracy  
-- [ ] Cross Entropy 
+- [x] Comprehensiveness  
+- [x] Sufficiency  
+- [x] Accuracy  
+- [x] Cross Entropy 
 
 # Appendix
 
