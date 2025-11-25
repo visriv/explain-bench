@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from .base_explainer import BaseExplainer
 from ..utils.registry import Registry
-
+from tqdm import tqdm
 @Registry.register_explainer("Grad")
 class GradExplainer(BaseExplainer):
     name = "Grad"
@@ -34,10 +34,10 @@ class GradExplainer(BaseExplainer):
         # Forward pass
         logits = net(X_t)                  # (N, C)
         top = logits.argmax(dim=-1)        # (N,)
-
+        N = X_t.shape[0]
         # --- Per-sample gradient wrt input ---
         atts = []
-        for i in range(X_t.shape[0]):
+        for i in tqdm(range(N), desc="IG grads", leave=False):
             net.zero_grad(set_to_none=True)
             if X_t.grad is not None:
                 X_t.grad.zero_()

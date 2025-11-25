@@ -112,23 +112,30 @@ def validate_classifier(model, Xva, yva, *, batch_size: int = 2048, logger=log):
 
     y_true = np.asarray(yva)
     # predictions & probs
-    if logits.shape[1] == 1:
+    if logits.shape[1] == 1:  # Single class (sigmoid)
         probs = torch.sigmoid(logits).numpy().ravel()
         preds = (probs >= 0.5).astype(np.int64)
     else:
         probs_full = F.softmax(logits, dim=1).cpu().numpy()
         preds = probs_full.argmax(axis=1).astype(np.int64)
-        probs = probs_full[:, 1] if probs_full.shape[1] == 2 else None
+        # probs = probs_full[:, 1] if probs_full.shape[1] == 2 else None
 
     prec = precision_score(y_true, preds, average="macro", zero_division=0)
     rec  = recall_score(y_true, preds, average="macro", zero_division=0)
     f1   = f1_score(y_true, preds, average="macro", zero_division=0)
     auroc = float("nan")
-    if probs is not None and len(np.unique(y_true)) == 2:
-        try:
-            auroc = roc_auc_score(y_true, probs)
-        except Exception:
-            auroc = float("nan")
+
+    try:
+        if len(np.unique(y_true)) == 2:
+            # binary classification
+            auroc = roc_auc_score(y_true, probs[:, 1])
+        else:
+            # multiclass (OvR macro-average)
+            auroc = roc_auc_score(y_true, probs_full, multi_class="ovr", average="macro")
+    except Exception as e:
+        auroc = float("nan")
+        logger.warning(f"[metrics] AUROC failed: {e}")
+    
 
     logger.info(f"[val] precision={prec:.3f} recall={rec:.3f} f1={f1:.3f} auroc={auroc:.3f}")
     return {"val_precision": prec, "val_recall": rec, "val_f1": f1, "val_auroc": auroc}

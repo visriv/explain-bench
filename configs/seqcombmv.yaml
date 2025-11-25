@@ -2,9 +2,9 @@ seed: 42
 output_dir: "runs"
 
 dataset:
-  name: "SeqCombUV"
+  name: "SeqCombMV"
   params:
-    base_path: "./data/SeqCombSingleBetter"  # where Timex expects data
+    base_path: "./data/SeqCombMV"  # where Timex expects data
     split_no: 1
 
 models:
@@ -48,11 +48,5 @@ metrics:
     params:
       k_ratio: [0.1, 0.2, 0.3]
   - name: "Sufficiency"
-    params:
-      k_ratio: [0.1, 0.2, 0.3]
-  - name: "Accuracy"
-    params:
-      k_ratio: [0.1, 0.2, 0.3]
-  - name: "CrossEntropy"
     params:
       k_ratio: [0.1, 0.2, 0.3]

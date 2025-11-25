@@ -28,4 +28,19 @@ models:
     single_label: True
 
 explainers: ["Grad","IG","LIME"]
-metrics: ["Faithfulness","Consistency","Stability"]
+metrics: 
+  - name: "Faithfulness"
+    params:
+      k_ratio: [0.2, 0.3, 0.4, 0.5]
+  - name: "Consistency"
+    params:
+      # k_ratio: 0.2
+  - name: "Stability"
+    params:
+      # k_ratio: 0.2
+  - name: "Comprehensiveness"
+    params:
+      k_ratio: [0.1, 0.2, 0.3]
+  - name: "Sufficiency"
+    params:
+      k_ratio: [0.1, 0.2, 0.3]

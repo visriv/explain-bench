@@ -33,7 +33,6 @@ explainers:
   #     steps: 30
   - name: "LIME"
     params:
-
 metrics: 
   - name: "Faithfulness"
     params:
@@ -44,3 +43,9 @@ metrics:
   - name: "Stability"
     params:
       # k_ratio: 0.2
+  - name: "Comprehensiveness"
+    params:
+      k_ratio: [0.1, 0.2, 0.3]
+  - name: "Sufficiency"
+    params:
+      k_ratio: [0.1, 0.2, 0.3]

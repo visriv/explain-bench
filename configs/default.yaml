@@ -22,12 +22,22 @@ model:
     epochs: 3
     batch_size: 64
 
-explainers:
-  - "Grad"
-  - "IG"
-  - "LIME"
+explainers: 
+  - name: "Grad"
+    params:
+  - name: "IG"
+    params:
+      steps: 30
+  - name: "LIME"
+    params:
 
-metrics:
-  - "Faithfulness"
-  - "Consistency"
-  - "Stability"
+metrics: 
+  - name: "Faithfulness"
+    params:
+      k_ratio: [0.2, 0.3, 0.4, 0.5]
+  - name: "Consistency"
+    params:
+      # k_ratio: 0.2
+  - name: "Stability"
+    params:
+      # k_ratio: 0.2

@@ -117,8 +117,7 @@ class Benchmark:
                 f.write("\t".join([
                     "data", 
                     "model", 
-                    "explainer", 
-                    "time_sec", 
+                    "explainer"
                 ]) + "\n")
 
         if gt:
@@ -191,6 +190,7 @@ class Benchmark:
                 dump_json({"dataset": data_cfg, "model": model_cfg, "explainer": expl_cfg},
                         os.path.join(expl_dir, "config.json"))
                 attr_path = os.path.join(expl_dir, "attributions.pkl")
+                expl_name = getattr(explainer, "name", explainer.__class__.__name__)
 
                 if os.path.isfile(attr_path):
                     log.info(f"[explainer] found cache for {expl_name} under '{data_dir_rel}', loading attributions (skip generation)…")
@@ -198,7 +198,7 @@ class Benchmark:
                         attributions = pickle.load(f)          # expected to be np.ndarray (N,T,D) or (N,D,T)
                 else:
                     # explain
-                    expl_name = getattr(explainer, "name", explainer.__class__.__name__)
+                    
                     log.info("   ▶ Explainer: %s — generating attributions…", expl_name)
                     t_expl = time.time()
                     attributions = explainer.explain(mdl, Xte)
@@ -236,8 +236,7 @@ class Benchmark:
                     flat_row = {
                         "data": data_dir_rel,
                         "model": mname,
-                        "explainer": expl_name,
-                        "time_sec": f"{expl_elapsed:.6f}",
+                        "explainer": expl_name
                     }
                     # flat_row.update(_flat_with_prefix("data_", data_cfg))       # e.g., data_base_path, data_split_no
                     flat_row.update(_flat_with_prefix("model_", model_cfg['params']))     # e.g., model_lr, model_epochs, model_batch_size
@@ -260,7 +259,6 @@ class Benchmark:
                 rows.append({
                     "model": mname,
                     "explainer": expl_name,
-                    "time_sec": expl_elapsed,
                     **metric_vals
                 })
 
@@ -269,12 +267,11 @@ class Benchmark:
         for r in rows:
             model_name = r.get("model")
             expl = r.get("explainer")
-            tsec = r.get("time_sec")
-            kv = {k: v for k, v in r.items() if k not in ("model", "explainer", "time_sec")}
+            kv = {k: v for k, v in r.items() if k not in ("model", "explainer")}
             kvs = ", ".join(
                 f"{k}={float(v):.4f}" if isinstance(v, (int, float, np.floating)) else f"{k}={v}"
                 for k, v in kv.items()
             )
-            log.info("   • [%s] %s: time=%.2fs | %s", model_name, expl, tsec, kvs)
+            log.info("   • [%s] %s: | %s", model_name, expl, kvs)
 
         return rows
