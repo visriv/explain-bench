@@ -15,10 +15,10 @@ ExplainBench is a **modular and extensible benchmarking framework** for evaluati
 explain-bench/
 ├── src/
 │   ├── configs/          # YAML configs
-│   ├── datasets/         # loaders: synthetic, UCR (stub)
+│   ├── datasets/         # loaders
 │   ├── models/           # LSTM, Transformer
-│   ├── explanations/     # Grad, IG, LIME (simple)
-│   ├── metrics/          # Faithfulness, Consistency, Stability
+│   ├── explanations/     # 
+│   ├── metrics/          # Faithfulness, Comprehensiveness, Sufficiency, AUROC, AUPRC
 │   ├── visualization/    # plotting & reporting
 │   ├── utils/            # registry, config, logging
 │   ├── benchmark.py      # core benchmark loop
@@ -72,6 +72,31 @@ See docstrings in `src/utils/registry.py` and base classes in each submodule.
 MIT
 
 
+## TODO:
+
+### [ ] Models
+- [ ] GradShap  
+- [ ] DeepLIFT  
+- [ ] WinIT  
+- [ ] FIT  
+- [ ] Dynamask / ExtrMask  
+- [ ] TimeX  
+- [ ] TimeX++  
+- [ ] ORTE  
+- [ ] ContraLSP  
+- [ ] TimeSHAP / WindowSHAP  
+
+---
+
+### [ ] Metrics
+- [ ] AUROC, AUP, AUR, AUPRC *(for datasets with ground truth explanations available)*  
+- [ ] for realworld datasets, choose k \in [0.1, 0.2, 0.3, …, 0.9] and calculate
+- [x] Faithfulness (drop in probability)
+- [ ] Comprehensiveness  
+- [ ] Sufficiency  
+- [ ] Accuracy  
+- [ ] Cross Entropy 
+
 # Appendix
 
 ## Datasets Overview
@@ -109,16 +134,16 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 
 | Dataset | Status | Web Source | Reference |
 |--------|:------:|------------|-----------|
-| State |  🧪 In progress | [link][State-src] | [ref][State-ref] |
-| Switch-Feature | 🧪 In progress | [link][Switch-src] | [ref][Switch-ref] |
+| State |  ✅ Implemented  | [link][State-src] | [ref][State-ref] |
+| Switch-Feature | ✅ Implemented  | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
 | SeqComb‑UV | ✅ Implemented | [link][seqcombuv-src] | [ref][seqcombuv-ref] |
-| SeqComb‑MV | 🧪 In progress | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
+| SeqComb‑MV | ✅ Implemented | [link][seqcombmv-src] | [ref][seqcombmv-ref] |
 | LowVar     | 🧪 In progress | [link][lowvar-src]    | [ref][lowvar-ref]    |
 | ECG        | 🧪 In progress | [link][ecg-src]       | [ref][ecg-ref]       |
 | PAM        | ✅ Implemented | [link][pam-src]       | [ref][pam-ref]       |
 | Epilepsy   | 🧪 In progress | [link][epilepsy-src]  | [ref][epilepsy-ref]  |
-| Boiler     | 🧪 In progress | [link][boiler-src]    | [ref][boiler-ref]    |
+| Boiler     | ✅ Implemented | [link][boiler-src]    | [ref][boiler-ref]    |
 | Wafer      | ⏳ Planned     | [link][wafer-src]     | [ref][wafer-ref]     |
 | FreezerRegular | ⏳ Planned | [link][freezer-src]   | [ref][freezer-ref]   |
 | Water      | ⏳ Planned     | [link][water-src]     | [ref][water-ref]     |
