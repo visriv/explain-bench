@@ -168,7 +168,11 @@ def expl_dir_name(explainer) -> Tuple[str, Dict[str, Any]]:
     p = {}
     for k, v in getattr(explainer, "__dict__", {}).items():
         if isinstance(v, (int, float, bool, str)):
+
+            if ((ename == "FIT") and (k in ["feature_size"])):
+                continue    
             p[k] = v
+            
     sub = []
     for k in sorted(p.keys()):
         val = p[k]

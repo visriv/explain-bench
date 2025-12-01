@@ -14,10 +14,14 @@ class _TinyTransformer(nn.Module):
         enc_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
         self.encoder = nn.TransformerEncoder(enc_layer, num_layers=num_layers)
         self.fc = nn.Linear(d_model, num_classes)
+        self.activation = nn.Sigmoid() if num_classes == 1 else nn.Softmax(dim=-1)
 
-    def forward(self, x):  # [B, T, D]
+    def forward(self, x, return_all=False):  # [B, T, D]
         z = self.proj(x)
-        h = self.encoder(z)[:, -1, :]
+        if return_all:
+            h = self.encoder(z)  # [B, T, D]
+        else:
+            h = self.encoder(z)[:, -1, :]  # [B, D]  # use last timestep
         return self.fc(h)
 
 @Registry.register_model("Transformer")

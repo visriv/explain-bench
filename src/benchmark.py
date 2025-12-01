@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from src.utils.train_utils import train_classifier, validate_classifier
 from src.utils.path_utils import *
 import os, json, time, re, pickle
+from torch.utils.data import TensorDataset, DataLoader
 # --- simple logging setup (idempotent) ---
 _LOG_FORMAT = "[%(asctime)s] %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=_LOG_FORMAT)
@@ -46,7 +47,12 @@ def _flat_with_prefix(prefix: str, d: dict) -> dict:
         return {}
     out = {}
     for k, v in d.items():
-        out[f"{prefix}{k}"] = "" if v is None else v
+        if v is None:
+            out[f"{prefix}{k}"] = ""
+        elif isinstance(v, (list, tuple)):
+            out[f"{prefix}{k}"] = ",".join(str(x) for x in v)
+        else:
+            out[f"{prefix}{k}"] = v
     return out
 
 def _ensure_tsv_header(tsv_path: str, new_cols: list[str]) -> list[str]:
@@ -186,12 +192,41 @@ class Benchmark:
                 expl_dir = os.path.join(model_dir, expl_dir_rel)
                 ensure_dir(expl_dir)
 
+
                 # save explainer config
                 dump_json({"dataset": data_cfg, "model": model_cfg, "explainer": expl_cfg},
                         os.path.join(expl_dir, "config.json"))
                 attr_path = os.path.join(expl_dir, "attributions.pkl")
                 expl_name = getattr(explainer, "name", explainer.__class__.__name__)
 
+
+                # set generator directory for FIT
+                if expl_name == "FIT":
+
+                    # Convert to PyTorch format (N,T,D) → (N,D,T) because FIT expects (B,D,T)
+                    Xtr_t = torch.tensor(Xtr, dtype=torch.float32).permute(0, 2, 1)
+                    Xv_t  = torch.tensor(Xv,  dtype=torch.float32).permute(0, 2, 1)
+                    ytr_t = torch.tensor(ytr, dtype=torch.long)
+                    yv_t  = torch.tensor(yv,  dtype=torch.long)
+
+                    train_loader = DataLoader(
+                        TensorDataset(Xtr_t, ytr_t),
+                        batch_size=64,
+                        shuffle=True
+                    )
+                    valid_loader = DataLoader(
+                        TensorDataset(Xv_t, yv_t),
+                        batch_size=64,
+                        shuffle=False
+                    )
+
+                    explainer.generator_path = expl_dir
+                    explainer.train_loader = train_loader
+                    explainer.valid_loader = valid_loader
+
+
+                    
+                    
                 if os.path.isfile(attr_path):
                     log.info(f"[explainer] found cache for {expl_name} under '{data_dir_rel}', loading attributions (skip generation)…")
                     with open(attr_path, "rb") as f:
