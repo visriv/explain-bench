@@ -556,6 +556,14 @@ class FeatureGenerator(BaseFeatureGenerator):
             )
             generator_model.to(self.device)
 
+
+    def _get_model_file_name(self) -> pathlib.Path:
+        list = []
+        for generator_model in self.models:
+            list.append(generator_model._get_model_file_name())
+        return list
+
+
     @staticmethod
     def get_name() -> str:
         return "feature_generator"

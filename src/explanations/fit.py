@@ -1,7 +1,7 @@
 # src/explanations/fit.py
 from __future__ import annotations
 import numpy as np
-import torch
+import torch, torch.nn as nn
 
 from .base_explainer import BaseExplainer
 from ..utils.registry import Registry
@@ -53,12 +53,17 @@ class FITExplainer(BaseExplainer):
         Run predict on base model. If the output is binary, i.e. num_class = 1, we will make it
         into a probability distribution by append (p, 1-p) to it.
         """
-        p = model.predict(x, return_all=False)
-        if model.num_states == 1:
+        x = x.permute(0, 2, 1)
+        activation = nn.Softmax(dim=-1)
+        logits = model.net.forward(x, return_all=False)
+        p = activation(logits).to(x.device)
+        # p = model.predict(x, return_all=False)
+        if model.num_classes == 2:
             # Create a 'probability distribution' (p, 1 - p)
             prob_distribution = torch.cat((p, 1 - p), dim=1)
             return prob_distribution
         return p
+
 
     # ------------------------------------------------------------------
     # GENERATOR HELPERS
@@ -98,8 +103,10 @@ class FITExplainer(BaseExplainer):
         Returns numpy saliency (N,T,D)
         """
         net = model.torch_module()
-        device = next(net.parameters()).device
         net.eval()
+
+        self.device = next(net.parameters()).device
+        device = self.device
 
         # ensure generator loaded
         if self.generator is None:
@@ -111,12 +118,13 @@ class FITExplainer(BaseExplainer):
         self.generator.to(device)
 
         x = torch.tensor(x, dtype=torch.float32, device=device)
+        x = x.permute(0, 2, 1)  # (N,T,D) -> (N,D,T)
         _, n_features, t_len = x.shape
         score = np.zeros(list(x.shape))
 
         for t in range(1, t_len):
-            p_y_t = self._model_predict(model, x[:, :, : t + 1])
-            p_tm1 = self._model_predict(model, x[:, :, 0:t])
+            p_y_t = self._model_predict(model, x[:, :, : t + 1]).float()
+            p_tm1 = self._model_predict(model, x[:, :, 0:t]).float()
 
             for i in range(n_features):
                 mu_z, std_z = self.generator.get_z_mu_std(x[:, :, :t])
@@ -127,7 +135,7 @@ class FITExplainer(BaseExplainer):
                 x_hat[:, :, :, t] = x_hat_t[:, :, :, 0]
                 x_hat = x_hat.reshape(-1, n_features, t + 1)
                 y_hat_t = self._model_predict(model, x_hat)
-                y_hat_t = y_hat_t.reshape(self.n_samples, -1, y_hat_t.shape[-1])
+                y_hat_t = y_hat_t.reshape(self.n_samples, -1, 1) #y_hat_t.shape[-1])
 
                 first_term = torch.sum(
                     torch.nn.KLDivLoss(reduction="none")(torch.log(p_tm1), p_y_t), -1

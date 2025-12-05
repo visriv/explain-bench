@@ -33,6 +33,7 @@ class Transformer(BaseModel):
         self.batch_size = batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.net.to(self.device)
+        self.num_classes = num_classes
 
     def fit(self, X_train, y_train):
         X = torch.tensor(X_train, dtype=torch.float32, device=self.device)
@@ -65,11 +66,11 @@ class Transformer(BaseModel):
             avg_loss = running_loss / max(seen, 1)
             tqdm.write(f"[Epoch {epoch}/{self.epochs}] train_loss: {avg_loss:.4f}")
 
-    def predict(self, X):
+    def predict_class(self, X, return_all=False):
         self.net.eval()
         with torch.no_grad():
             X = torch.tensor(X, dtype=torch.float32, device=self.device)
-            logits = self.net(X)
+            logits = self.net(X, return_all=return_all)
             return logits.argmax(dim=-1).cpu().numpy()
 
     # def validate(self, Xva, yva, batch_size: int = 32):

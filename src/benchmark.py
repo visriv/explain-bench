@@ -200,10 +200,10 @@ class Benchmark:
                 expl_name = getattr(explainer, "name", explainer.__class__.__name__)
 
 
-                # set generator directory for FIT
-                if expl_name == "FIT":
+                # set generator directory for FIT/WINIT/RamBIT
+                if expl_name in ["FIT", "WINIT"]:
 
-                    # Convert to PyTorch format (N,T,D) → (N,D,T) because FIT expects (B,D,T)
+                    # Convert to PyTorch format (N,T,D) → (N,D,T) because FIT expects (N,D,T)
                     Xtr_t = torch.tensor(Xtr, dtype=torch.float32).permute(0, 2, 1)
                     Xv_t  = torch.tensor(Xv,  dtype=torch.float32).permute(0, 2, 1)
                     ytr_t = torch.tensor(ytr, dtype=torch.long)

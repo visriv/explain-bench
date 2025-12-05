@@ -24,6 +24,7 @@ class LSTM(BaseModel):
         self.lr=float(lr); self.epochs=epochs; self.batch_size=batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.net.to(self.device)
+        self.num_classes = num_classes
 
     def fit(self, X_train, y_train):
         X = torch.tensor(X_train, dtype=torch.float32, device=self.device)

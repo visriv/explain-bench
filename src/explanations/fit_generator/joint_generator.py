@@ -261,8 +261,8 @@ class JointFeatureGenerator(BaseFeatureGenerator):
             Shape = (num_samples, batch_size, (num_features - len(sig_inds)) * time_forward)
 
         """
-        if self.feature_size == len(sig_inds):
-            return current, current
+        if self.feature_size == len(sig_inds): # TODO : here the shapes mismatch
+            return current.unsqueeze(0).repeat(n_samples, 1, 1).unsqueeze(-1), current
         current = current.to(self.device)
         if len(current.shape) == 1:
             assert current.shape[0] == self.feature_size
