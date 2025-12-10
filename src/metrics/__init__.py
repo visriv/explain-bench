@@ -7,3 +7,4 @@ from .comprehensiveness import Comprehensiveness
 from .sufficiency import Sufficiency
 from .accuracy import Accuracy
 from .cross_entropy import CrossEntropy
+from .auc_metrics import ExplanationAUC
