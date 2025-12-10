@@ -75,11 +75,11 @@ MIT
 ## TODO:
 
 ### [ ] Models
+- [ ] IG, Grad, LIME
 - [ ] GradShap  
 - [ ] DeepLIFT  
-- [ ] WinIT  
-- [ ] FIT  
-- [ ] Dynamask / ExtrMask  
+- [x] WinIT / FIT  
+- [x] Dynamask / ExtrMask  
 - [ ] TimeX  
 - [ ] TimeX++  
 - [ ] ORTE  
