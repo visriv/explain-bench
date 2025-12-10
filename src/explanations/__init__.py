@@ -4,3 +4,4 @@ from .lime import LIMEExplainer
 from .dynamask import DynamaskExplainer  
 from .fit import FITExplainer
 from .winit import WINITExplainer
+from .deeplift import DeepLIFTExplainer

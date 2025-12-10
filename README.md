@@ -75,9 +75,9 @@ MIT
 ## TODO:
 
 ### [ ] Models
-- [ ] IG, Grad, LIME
+- [x] IG, Grad, LIME
 - [ ] GradShap  
-- [ ] DeepLIFT  
+- [x] DeepLIFT  
 - [x] WinIT / FIT  
 - [x] Dynamask / ExtrMask  
 - [ ] TimeX  
@@ -89,7 +89,7 @@ MIT
 ---
 
 ### [ ] Metrics
-- [ ] AUROC, AUP, AUR, AUPRC *(for datasets with ground truth explanations available)*  
+- [x] AUROC, AUP, AUR, AUPRC *(for datasets with ground truth explanations available)*  
 - [x] for realworld datasets, choose k \in [0.1, 0.2, 0.3, …, 0.9] and calculate
 - [x] Faithfulness (drop in probability)
 - [x] Comprehensiveness  

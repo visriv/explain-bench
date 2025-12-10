@@ -16,47 +16,57 @@ dataset:
     # limit_test: null
 
 models:
-  - name: "LSTM"
-    params:
-      input_dim: 3     # set to your D (features)
-      hidden_dim: 64
-      num_layers: 1
-      num_classes: 2   # set to your number of classes
-      lr: 1e-3
-      epochs: 3
-      batch_size: 64
-    single_label: True
+  # - name: "LSTM"
+  #   params:
+  #     input_dim: 3     # set to your D (features)
+  #     hidden_dim: 64
+  #     num_layers: 1
+  #     num_classes: 2   # set to your number of classes
+  #     lr: 1e-3
+  #     epochs: 3
+  #     batch_size: 64
+  #   single_label: True
 
+  - name: "Transformer"
+    params:
+      d_model: 64
+      nhead: 4
+      num_layers: 1
+      lr: 1e-3
+      epochs: 500
+      batch_size: 32
+      patience: 100
+      early_stop: True
 explainers: 
   # - name: "Grad"
   #   params:
   # - name: "IG"
   #   params:
   #     steps: 30
-  # - name: "LIME"
-  #   params:
-  # - name: "DeepLIFT"
-  #   params:
-  # - name: "Dynamask"
-  #   params:
-  #     # area_list:                       # float list; e.g. [0.1,0.2] or null
-  #     num_class: 4
-  #     blur_type: 'gaussian'                  # one of [gaussian, fadema]
-  #     # deletion_mode:                   # boolean or null
-  #     # size_reg_factor_dilation:                    # integer or null
-  #     # time_reg_factor:                    # integer or null
-  #     # loss:                       # one of [logloss, ce] or null
-  #     epoch: 200                      # # of Dynamask epochs
-  #     use_last_timestep_only: True                # "True" or "False" or null
-  # - name: "FIT"
-  #   params:
-  #     epochs_gen: 150                     # # of generator training epochs
-  #     feature_size: 1
-  #     num_samples: 10
+  - name: "LIME"
+    params:
+  - name: "DeepLIFT"
+    params:
+  - name: "Dynamask"
+    params:
+      # area_list:                       # float list; e.g. [0.1,0.2] or null
+      num_class: 2
+      blur_type: 'gaussian'                  # one of [gaussian, fadema]
+      # deletion_mode:                   # boolean or null
+      # size_reg_factor_dilation:                    # integer or null
+      # time_reg_factor:                    # integer or null
+      # loss:                       # one of [logloss, ce] or null
+      epoch: 200                      # # of Dynamask epochs
+      use_last_timestep_only: True                # "True" or "False" or null
+  - name: "FIT"
+    params:
+      epochs_gen: 150                     # # of generator training epochs
+      feature_size: 3
+      num_samples: 10
   - name: "WINIT"
     params:
       epochs_gen: 150                     # # of generator training epochs
-      num_features: 1
+      num_features: 3
       num_samples: 10
       window_size: 10
       conditional: False # Not possible for num_feature = 1
@@ -68,24 +78,24 @@ explainers:
 metrics: 
   - name: "Faithfulness"
     params:
-      k_ratio: [0.2, 0.3, 0.4, 0.5]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Consistency"
     params:
-      # k_ratio: 0.2
+      # k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Stability"
     params:
-      # k_ratio: 0.2
+      # k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Comprehensiveness"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Sufficiency"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Accuracy"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "CrossEntropy"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "ExplanationAUC"
     params:
