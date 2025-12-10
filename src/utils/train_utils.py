@@ -41,11 +41,11 @@ def _get_torch_module(model) -> Tuple[nn.Module, torch.device, dict]:
     return net, device, hparams
 
 
-def train_classifier(model, Xtr, ytr, Xva=None, yva=None, *, logger=log):
+def train_classifier(model, Xtr, ytr, Xva=None, yva=None, logger=log,
+                     early_stop=True, patience=10):
     """
     Generic classifier trainer for (N,T,D) -> logits.
-    Expects cross-entropy setup. Works for any model exposing `torch_module()` (or being nn.Module).
-    Uses model.lr / model.epochs / model.batch_size if present.
+    Adds early stopping based on validation loss.
     """
     net, device, hp = _get_torch_module(model)
     ds = TensorDataset(
@@ -56,13 +56,20 @@ def train_classifier(model, Xtr, ytr, Xva=None, yva=None, *, logger=log):
     opt = torch.optim.Adam(net.parameters(), lr=hp["lr"])
     ce = nn.CrossEntropyLoss()
 
+    # --- Early Stopping State ---
+    best_val_loss = float("inf")
+    best_state = None
+    wait = 0
+
     net.train(True)
     for epoch in range(1, hp["epochs"] + 1):
         running_loss, seen = 0.0, 0
         pbar = tqdm(dl, desc=f"[{_model_name(model)}] Epoch {epoch}/{hp['epochs']}", leave=False)
+
         for xb, yb in pbar:
             xb = xb.to(device)
             yb = yb.to(device)
+
             opt.zero_grad()
             logits = net(xb)
             loss = ce(logits, yb)
@@ -74,13 +81,41 @@ def train_classifier(model, Xtr, ytr, Xva=None, yva=None, *, logger=log):
             seen += bsz
             pbar.set_postfix(loss=f"{running_loss/max(seen,1):.4f}")
 
-        tqdm.write(f"[{_model_name(model)}][Epoch {epoch}/{hp['epochs']}] train_loss={running_loss/max(seen,1):.4f}")
+        train_loss = running_loss / max(seen, 1)
+        tqdm.write(f"[{_model_name(model)}][Epoch {epoch}/{hp['epochs']}] "
+                   f"train_loss={train_loss:.4f}")
 
-        # optional quick val each epoch
-        if Xva is not None and yva is not None:
-            _ = validate_classifier(model, Xva, yva, batch_size=2048, logger=logger)
+        # -------------------------
+        # VALIDATION & EARLY STOPPING
+        # -------------------------
+        if early_stop and Xva is not None and yva is not None:
+            val_loss, _ = validate_classifier(
+                model, Xva, yva, batch_size=2048, logger=logger, return_loss=True
+            )
 
-def validate_classifier(model, Xva, yva, *, batch_size: int = 2048, logger=log):
+            # Track best
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_state = {k: v.cpu().clone() for k, v in net.state_dict().items()}
+                wait = 0
+            else:
+                wait += 1
+
+            # patience reached → stop
+            if wait >= patience:
+                tqdm.write(
+                    f"[{_model_name(model)}] Early stopping at epoch {epoch} "
+                    f"(best val={best_val_loss:.4f})"
+                )
+                break
+
+    # Restore best
+    if early_stop and best_state is not None:
+        net.load_state_dict(best_state)
+        net.to(device)
+
+
+def validate_classifier(model, Xva, yva, *, batch_size: int = 32, logger=log, return_loss = False):
     """
     Unified validation for classifiers.
     Handles: 2-logit softmax, 1-logit sigmoid binary, or multiclass softmax.
@@ -138,4 +173,10 @@ def validate_classifier(model, Xva, yva, *, batch_size: int = 2048, logger=log):
     
 
     logger.info(f"[val] precision={prec:.3f} recall={rec:.3f} f1={f1:.3f} auroc={auroc:.3f}")
-    return {"val_precision": prec, "val_recall": rec, "val_f1": f1, "val_auroc": auroc}
+    if return_loss:
+        ce = nn.CrossEntropyLoss()
+        val_loss = ce(torch.from_numpy(np.asarray(logits)).float(), torch.from_numpy(yva).long()).item()
+
+    return val_loss, {"val_precision": prec, "val_recall": rec, "val_f1": f1, "val_auroc": auroc}
+
+    

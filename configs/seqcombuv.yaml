@@ -14,16 +14,20 @@ models:
       nhead: 4
       num_layers: 1
       lr: 1e-3
-      epochs: 100
+      epochs: 500
       batch_size: 32
+      patience: 100
+      early_stop: True
 
   # - name: "LSTM"
-  #   params:
-  #     hidden_dim: 64
-  #     num_layers: 1
-  #     lr: 1e-3
-  #     epochs: 300
-  #     batch_size: 32
+    # params:
+    #   hidden_dim: 64
+    #   num_layers: 1
+    #   lr: 1e-3
+      # epochs: 500
+      # batch_size: 32
+      # patience: 100
+      # early_stop: True
 
 explainers: 
   # - name: "Grad"
@@ -55,8 +59,8 @@ explainers:
       num_features: 1
       num_samples: 10
       window_size: 10
-      conditional: False
-      joint: False
+      conditional: False # Not possible for num_feature = 1
+      joint: True
       metric: "kl" # ["kl", "pd", or "js"]
 
 

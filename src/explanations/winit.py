@@ -147,12 +147,12 @@ class WINITExplainer(BaseExplainer):
             ckpt = ckpts
             if ckpt.exists():
                 self.log.info(f"[FIT] Loading existing generator checkpoint: {ckpt}")
-                self.generator.load_generator()
+                self.generators.load_generator()
             else:
                 assert train_loader is not None and valid_loader is not None, \
                     "FIT needs train_loader and valid_loader the first time you run it."
                 self.log.info("[FIT] Training joint generator from scratch...")
-                self.generator.train_generator(train_loader, valid_loader, num_epochs = self.epochs_gen)
+                self.generators.train_generator(train_loader, valid_loader, num_epochs = self.epochs_gen)
 
         else:
             for ckpt in ckpts:

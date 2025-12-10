@@ -41,6 +41,7 @@ class BenchmarkRunner:
         p = dict(params or {})
         p.setdefault('input_dim', input_dim)
         p.setdefault('num_classes', num_classes)
+        
         m = M(**p)
         if not hasattr(m, "name"):
             try:

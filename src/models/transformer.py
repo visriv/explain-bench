@@ -26,7 +26,9 @@ class _TinyTransformer(nn.Module):
 
 @Registry.register_model("Transformer")
 class Transformer(BaseModel):
-    def __init__(self, input_dim=6, d_model=64, nhead=4, num_layers=1, num_classes=2, lr=1e-3, epochs=3, batch_size=64, device=None):
+    def __init__(self, input_dim=6, d_model=64, nhead=4, num_layers=1, num_classes=2, lr=1e-3, epochs=3, batch_size=64,
+                device=None,
+                **kwargs):
         self.net = _TinyTransformer(input_dim, d_model, nhead, num_layers, num_classes)
         self.lr = float(lr)
         self.epochs = epochs

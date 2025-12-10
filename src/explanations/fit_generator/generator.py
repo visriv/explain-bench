@@ -248,7 +248,7 @@ class IndividualFeatureGenerator(torch.nn.Module):
             Otherwise, the output will be sampled from this distribution, together with mu.
             Shape = (num_time, num_samples, prediction_size)
         """
-        x = x.permute(2, 0, 1)  # (t, bs, f)
+        x = x.permute(2, 0, 1)  # (t, bs, d)
         all_encoding, _ = self.rnn(x.to(self.device))
         # all_encoding.shape = (t, bs, h)
         if self.conditional:

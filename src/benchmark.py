@@ -5,6 +5,7 @@ import logging
 from typing import List, Dict, Any
 from src.utils.train_utils import train_classifier, validate_classifier
 from src.utils.path_utils import *
+from src.utils.plot_samples import save_sample_plots, plot_explainer_samples
 import os, json, time, re, pickle
 from torch.utils.data import TensorDataset, DataLoader
 # --- simple logging setup (idempotent) ---
@@ -137,6 +138,14 @@ class Benchmark:
             log.info("   • Using GT for metrics: %s",
                      "importance_test" if "importance_test" in gt else "importance_train")
 
+
+        plot_dir = os.path.join(run_root, "plots")
+        os.makedirs(plot_dir, exist_ok=True)
+
+        save_sample_plots(Xtr, split_name="train", outdir=plot_dir)
+        save_sample_plots(Xte, split_name="test", outdir=plot_dir, gt = gt_test )
+
+
         # ---- iterate over one or many models ----
         for mname, mdl in _as_model_list(self.models):
             log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -170,13 +179,13 @@ class Benchmark:
             else:
                 log.info(f"[model] training {mname} on dataset '{data_dir_rel}'")
                 t0 = time.time()
-                train_classifier(mdl, Xtr, ytr, Xva=Xv, yva=yv, logger=log)
+                train_classifier(mdl, Xtr, ytr, Xva=Xv, yva=yv, logger=log, early_stop=model_cfg["params"]["early_stop"], patience=model_cfg["params"]["patience"])
                 log.info(f"[model] training complete in {time.time() - t0:.2f}s")
                 save_checkpoint(mdl, ckpt_path, meta={"data_dir": data_dir_rel, "model_dir": model_dir_rel})
                 log.info(f"[model] saved checkpoint → {ckpt_path}")
 
             # quick sanity validation after load/train
-            val_out = validate_classifier(mdl, Xv, yv, logger=log)
+            val_loss, val_out = validate_classifier(mdl, Xv, yv, logger=log, return_loss=True)
             print(val_out)
 
 
@@ -231,6 +240,13 @@ class Benchmark:
                     log.info(f"[explainer] found cache for {expl_name} under '{data_dir_rel}', loading attributions (skip generation)…")
                     with open(attr_path, "rb") as f:
                         attributions = pickle.load(f)          # expected to be np.ndarray (N,T,D) or (N,D,T)
+                        plot_explainer_samples(
+                            X=Xte,
+                            y=yte,
+                            attributions=attributions,
+                            expl_name=expl_name,
+                            expl_dir=expl_dir,
+                        )
                 else:
                     # explain
                     
@@ -239,7 +255,13 @@ class Benchmark:
                     attributions = explainer.explain(mdl, Xte)
                     expl_elapsed = time.time() - t_expl
                     log.info("     • Done in %.2fs; attr shape %s", expl_elapsed, _shape(attributions))
-
+                    plot_explainer_samples(
+                        X=Xte,
+                        y=yte,
+                        attributions=attributions,
+                        expl_name=expl_name,
+                        expl_dir=expl_dir,
+                    )
                     # Ensure (N,T,D)
                     if attributions.shape[1] != Xte.shape[1]:
                         attributions = np.transpose(attributions, (0, 2, 1))

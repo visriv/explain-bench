@@ -28,8 +28,15 @@ class FreqShape(BaseDataset):
         Xte = _TNDtoNTD(tes[0]); Tte = _TNtoNT(tes[1]);   yte = tes[2].detach().cpu().numpy().astype('int64')
 
         gt = None
-        if 'gt_exps' in D and D['gt_exps'] is not None:
-            ge = _TNDtoNTD(D['gt_exps'])
-            gt = {'importance_train': ge[:Xtr.shape[0]]}  # at least provide train GT if aligned
+        if 'gt_exps' in D and D['gt_exps'] is not None: # test GT is available
+            # idntify GT for training set or test set or val set based on shape
+            if D['gt_exps'].shape[1] == Xtr.shape[0]:
+                ge = _TNDtoNTD(D['gt_exps'])
+                gt = {'importance_train': ge}
+            elif D['gt_exps'].shape[1] == Xte.shape[0]:
+                ge = _TNDtoNTD(D['gt_exps'])
+                gt = {'importance_test': ge}
+            else: 
+                raise Exception("GT explanations found but cannot match to train/test based on shape.")
 
         return (Xtr, ytr, Ttr), (Xv, yv, Tv), (Xte, yte, Tte), gt
