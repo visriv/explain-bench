@@ -270,7 +270,15 @@ class Benchmark:
                         pickle.dump(attributions, f, protocol=pickle.HIGHEST_PROTOCOL)
                     log.info("     • Saved attributions to %s", attr_path)
 
-
+                # --- build a flat row: core identifiers + flattened params + flattened metrics
+                flat_row = {
+                    "data": data_dir_rel,
+                    "model": mname,
+                    "explainer": expl_name
+                }
+                flat_row.update(_flat_with_prefix("model_", model_cfg['params']))     # e.g., model_lr, model_epochs, model_batch_size
+                flat_row.update(_flat_with_prefix("expl_", expl_cfg['params']))       # e.g., expl_sigma, expl_samples
+                    
 
 
                 # Metrics
@@ -289,29 +297,20 @@ class Benchmark:
                              metric_time)
                     metric_vals.update(vals)
 
-                    # --- build a flat row: core identifiers + flattened params + flattened metrics
-                    flat_row = {
-                        "data": data_dir_rel,
-                        "model": mname,
-                        "explainer": expl_name
-                    }
-                    # flat_row.update(_flat_with_prefix("data_", data_cfg))       # e.g., data_base_path, data_split_no
-                    flat_row.update(_flat_with_prefix("model_", model_cfg['params']))     # e.g., model_lr, model_epochs, model_batch_size
-                    flat_row.update(_flat_with_prefix("expl_", expl_cfg['params']))       # e.g., expl_sigma, expl_samples
-                    flat_row.update(_flat_with_prefix("metric_", metric_cfg['params']))  # e.g., k_ratio
+                    flat_row.update(_flat_with_prefix("metric_cfg_", metric_cfg['params']))  # e.g., k_ratio
                     flat_row.update(_flat_with_prefix("metric_", metric_vals))  # e.g., metric_faithfulness_drop, metric_consistency_cos
                     flat_row.update(_flat_with_prefix("", val_out))  # e.g., pr, auprc, auroc
 
-                    # Establish TSV path once per dataset
-                    tsv_path = os.path.join(run_root, "results.tsv")
+                # Establish TSV path once per dataset
+                tsv_path = os.path.join(run_root, "results.tsv")
 
-                    # Ensure header includes all current columns (append missing ones in-place)
-                    header = _ensure_tsv_header(tsv_path, list(flat_row.keys()))
+                # Ensure header includes all current columns (append missing ones in-place)
+                header = _ensure_tsv_header(tsv_path, list(flat_row.keys()))
 
-                    # Write the row in header order (fill missing keys with "")
-                    with open(tsv_path, "a", encoding="utf-8") as f:
-                        f.write("\t".join(str(flat_row.get(col, "")) for col in header) + "\n")
-                    print('written metrics to {run_root}/{tsv_path}')
+                # Write the row in header order (fill missing keys with "")
+                with open(tsv_path, "a", encoding="utf-8") as f:
+                    f.write("\t".join(str(flat_row.get(col, "")) for col in header) + "\n")
+                print('written metrics to {run_root}/{tsv_path}')
 
                 rows.append({
                     "model": mname,
