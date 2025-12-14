@@ -1,7 +1,8 @@
 import pandas as pd
 
 SRC = "results/leaderboard.tsv"
-DST = "results/leaderboard_clean.tsv"
+DST1 = "results/leaderboard_clean.tsv"
+DST2 = "docs/data/leaderboard.tsv"
 
 df = pd.read_csv(SRC, sep="\t")
 
@@ -43,5 +44,6 @@ df = df.sort_values(by=["data", "model", "explainer"])
 # ----------------------------------------
 # Write clean leaderboard
 # ----------------------------------------
-df.to_csv(DST, sep="\t", index=False)
-print(f"[OK] Wrote clean leaderboard to {DST}")
+df.to_csv(DST1, sep="\t", index=False)
+df.to_csv(DST2, sep="\t", index=False)
+print(f"[OK] Wrote clean leaderboard to {DST1}")

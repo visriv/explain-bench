@@ -1,71 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ExplainBench — Time-Series XAI Benchmark</title>
-  <link rel="stylesheet" href="leaderboard.css">
+  <meta charset="UTF-8" />
+  <title>ExplainBench</title>
+
+  <link rel="stylesheet" href="leaderboard.css" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 </head>
+
 <body>
+  <header>
+    <h1>ExplainBench</h1>
+    <p class="subtitle">A benchmark for time-series explainability</p>
+  </header>
 
-<header>
-  <h1>ExplainBench</h1>
-  <p class="subtitle">
-    A benchmarking framework for time-series explainability
-  </p>
-</header>
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="filter">
+      <h3>Dataset</h3>
+      <div id="filter-dataset" class="checkbox-list"></div>
+    </div>
 
-<section>
-  <h2>Overview</h2>
-  <p>
-    ExplainBench evaluates time-series explainers across datasets, models,
-    and explanation metrics such as faithfulness, comprehensiveness, and sufficiency.
-  </p>
-</section>
+    <div class="filter">
+      <h3>Model</h3>
+      <div id="filter-model" class="checkbox-list"></div>
+    </div>
 
-<section>
-  <h2>Leaderboard</h2>
-  <p class="hint">
-    One row per (dataset, model, explainer). Metrics are averaged where applicable.
-  </p>
+    <div class="filter">
+      <h3>Explainer</h3>
+      <div id="filter-explainer" class="checkbox-list"></div>
+    </div>
+  </section>
 
-  <div class="table-container">
-    <table id="table"></table>
-  </div>
-</section>
+  <!-- TABLE -->
+  <section>
+    <h2>Leaderboard</h2>
+    <div class="table-wrap">
+      <table id="table"></table>
+    </div>
+  </section>
 
-<section>
-  <h2>Benchmark Plots</h2>
+  <!-- PLOTS -->
+  <section>
+    <h2>Explanation Curves</h2>
 
-  <div class="plot-grid">
-    <figure>
-      <img src="plots/heatmap_val_auroc.png">
-      <figcaption>Classifier AUROC (Model × Explainer)</figcaption>
-    </figure>
+    <div class="plot-card">
+      <div id="plot-faithfulness"></div>
+    </div>
 
-    <figure>
-      <img src="plots/faithfulness_curve.png">
-      <figcaption>Faithfulness vs k</figcaption>
-    </figure>
+    <div class="plot-card">
+      <div id="plot-comprehensiveness"></div>
+    </div>
 
-    <figure>
-      <img src="plots/comprehensiveness_curve.png">
-      <figcaption>Comprehensiveness vs k</figcaption>
-    </figure>
+    <div class="plot-card">
+      <div id="plot-sufficiency"></div>
+    </div>
+  </section>
 
-    <figure>
-      <img src="plots/sufficiency_curve.png">
-      <figcaption>Sufficiency vs k</figcaption>
-    </figure>
-  </div>
-</section>
+  <footer>
+    <a href="https://github.com/visriv/explain-bench">GitHub</a> · ExplainBench
+  </footer>
 
-<footer>
-  <p>
-    ExplainBench · Open-source benchmark for XAI research<br>
-    <a href="https://github.com/visriv/explain-bench">GitHub Repository</a>
-  </p>
-</footer>
-
-<script src="leaderboard.js"></script>
+  <script src="leaderboard.js"></script>
 </body>
 </html>

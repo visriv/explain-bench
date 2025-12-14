@@ -60,21 +60,23 @@ class DeepLIFTExplainer(BaseExplainer):
         net.eval()
 
         X = np.asarray(X, dtype=np.float32)
+        
+        X_tensor = torch.tensor(X, dtype=torch.float32, device=device)
         baselines = self._make_baseline(X)
-
+        baselines_tensor = torch.tensor(baselines, dtype=torch.float32, device=device)
         N, T, D = X.shape
 
         # Captum expects (N, channels, length, ...) → for time series we use (N, D, T)
         # but your framework convention is (N,T,D). Let's convert:
-        X_ch = torch.tensor(X.transpose(0, 2, 1), dtype=torch.float32, device=device)      # (N, D, T)
-        B_ch = torch.tensor(baselines.transpose(0, 2, 1), dtype=torch.float32, device=device)
+        X_ndt = torch.tensor(X.transpose(0, 2, 1), dtype=torch.float32, device=device)      # (N, D, T)
+        B_ndt = torch.tensor(baselines.transpose(0, 2, 1), dtype=torch.float32, device=device)
 
         # DeepLIFT instance
         dl = DeepLift(net)
 
         # Compute attributions for the predicted class (standard XAI convention)
         with torch.no_grad():
-            logits = net(X_ch)                  # shape (N,C)
+            logits = net(X_tensor)                  # shape (N,C)
             pred_classes = logits.argmax(dim=-1)
 
         # Captum expects target index tensor
@@ -82,7 +84,7 @@ class DeepLIFTExplainer(BaseExplainer):
 
         # Compute attributions
         # deepLIFT returns list if model has multiple inputs; here it's a single tensor
-        attributions = dl.attribute(X_ch, baselines=B_ch, target=target_idx)  # (N, D, T)
+        attributions = dl.attribute(X_tensor, baselines=baselines_tensor, target=target_idx)  # (N, D, T)
 
         # Back to (N,T,D)
         attributions = attributions.detach().cpu().numpy().transpose(0, 2, 1)

@@ -23,7 +23,9 @@ models:
   #     num_layers: 1
   #     num_classes: 2   # set to your number of classes
   #     lr: 1e-3
-  #     epochs: 3
+  #     epochs: 500
+  #     patience: 100
+  #     early_stop: True
   #     batch_size: 64
   #   single_label: True
 
@@ -45,8 +47,8 @@ explainers:
   #     steps: 30
   - name: "LIME"
     params:
-  # - name: "DeepLIFT"
-  #   params:
+  - name: "DeepLIFT"
+    params:
   - name: "Dynamask"
     params:
       # area_list:                       # float list; e.g. [0.1,0.2] or null
