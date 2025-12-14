@@ -66,6 +66,22 @@ python scripts/main.py --config configs/default.yaml
 
 See docstrings in `src/utils/registry.py` and base classes in each submodule.
 
+## Leaderboard
+
+Main tsv : docs/data/leaderboard.tsv
+
+run
+```bash
+scripts/leaderboard/validate.py
+```
+
+To test locally, go to ROOT/docs/ and run
+```bash
+python -m http.server 8000
+```
+
+Once the tsv is updated in the github repo,  the leaderboard can be viewed at https://visriv.github.io/explain-bench/
+
 ## 📜 License
 
 MIT
