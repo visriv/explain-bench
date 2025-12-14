@@ -1,12 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ExplainBench Leaderboard</title>
+  <meta charset="UTF-8">
+  <title>ExplainBench — Time-Series XAI Benchmark</title>
   <link rel="stylesheet" href="leaderboard.css">
 </head>
 <body>
-<h1>ExplainBench Leaderboard</h1>
-<table id="table"></table>
+
+<header>
+  <h1>ExplainBench</h1>
+  <p class="subtitle">
+    A benchmarking framework for time-series explainability
+  </p>
+</header>
+
+<section>
+  <h2>Overview</h2>
+  <p>
+    ExplainBench evaluates time-series explainers across datasets, models,
+    and explanation metrics such as faithfulness, comprehensiveness, and sufficiency.
+  </p>
+</section>
+
+<section>
+  <h2>Leaderboard</h2>
+  <p class="hint">
+    One row per (dataset, model, explainer). Metrics are averaged where applicable.
+  </p>
+
+  <div class="table-container">
+    <table id="table"></table>
+  </div>
+</section>
+
+<section>
+  <h2>Benchmark Plots</h2>
+
+  <div class="plot-grid">
+    <figure>
+      <img src="plots/heatmap_val_auroc.png">
+      <figcaption>Classifier AUROC (Model × Explainer)</figcaption>
+    </figure>
+
+    <figure>
+      <img src="plots/faithfulness_curve.png">
+      <figcaption>Faithfulness vs k</figcaption>
+    </figure>
+
+    <figure>
+      <img src="plots/comprehensiveness_curve.png">
+      <figcaption>Comprehensiveness vs k</figcaption>
+    </figure>
+
+    <figure>
+      <img src="plots/sufficiency_curve.png">
+      <figcaption>Sufficiency vs k</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer>
+  <p>
+    ExplainBench · Open-source benchmark for XAI research<br>
+    <a href="https://github.com/visriv/explain-bench">GitHub Repository</a>
+  </p>
+</footer>
+
 <script src="leaderboard.js"></script>
 </body>
 </html>

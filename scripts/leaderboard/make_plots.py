@@ -131,4 +131,20 @@ if acc_curves:
     plt.savefig("results/plots/accuracy_curve.png", dpi=200)
     plt.close()
 
+
+
+
 print("[OK] ICML-style benchmark plots generated in results/plots/")
+
+from pathlib import Path
+import shutil
+
+src_dir = Path("results/plots")
+dst_dir = Path("docs/plots")
+dst_dir.mkdir(parents=True, exist_ok=True)
+
+for png in src_dir.glob("*.png"):
+    shutil.copy(png, dst_dir)
+
+print("Copied them to docs/plots/ as well for leaderboard display.")
+
