@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from src.utils.train_utils import train_classifier, validate_classifier
 from src.utils.path_utils import *
 from src.utils.plot_samples import save_sample_plots, plot_explainer_samples
+from src.leaderboard.aggregate import append_to_global_leaderboard
 import os, json, time, re, pickle
 from torch.utils.data import TensorDataset, DataLoader
 # --- simple logging setup (idempotent) ---
@@ -311,6 +312,13 @@ class Benchmark:
                 with open(tsv_path, "a", encoding="utf-8") as f:
                     f.write("\t".join(str(flat_row.get(col, "")) for col in header) + "\n")
                 print('written metrics to {run_root}/{tsv_path}')
+
+                # Write to leaderboard
+                append_to_global_leaderboard(
+                    local_tsv_path=os.path.join(run_root, "results.tsv"),
+                    global_tsv_path=os.path.join("results", "leaderboard.tsv")
+
+                )
 
                 rows.append({
                     "model": mname,

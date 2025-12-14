@@ -6,5 +6,9 @@ scikit-learn
 matplotlib
 tqdm
 captum
-jitcdde
+jitcdde==1.4
+jitcxde_common==1.4.1
+symengine
 seaborn
+
+

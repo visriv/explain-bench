@@ -45,8 +45,8 @@ explainers:
   #     steps: 30
   - name: "LIME"
     params:
-  - name: "DeepLIFT"
-    params:
+  # - name: "DeepLIFT"
+  #   params:
   - name: "Dynamask"
     params:
       # area_list:                       # float list; e.g. [0.1,0.2] or null

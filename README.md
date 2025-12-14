@@ -21,9 +21,9 @@ explain-bench/
 │   ├── metrics/          # Faithfulness, Comprehensiveness, Sufficiency, AUROC, AUPRC
 │   ├── visualization/    # plotting & reporting
 │   ├── utils/            # registry, config, logging
-│   ├── benchmark.py      # core benchmark loop
-│   ├── runner.py         # orchestrator
 ├── scripts/              # CLI scripts
+│   ├── run_benchmark.py  # core benchmark loop
+│   ├── main.py           # orchestrator
 ├── tests/                # basic sanity tests
 ├── README.md
 ├── requirements.txt
@@ -59,8 +59,7 @@ They can be either downloaded or generated synthetically. The source is mentione
 ## 🧠 Quickstart
 
 ```bash
-python scripts/run_benchmark.py --config configs/default.yaml
-#python scripts/visualize_results.py --input results/benchmark_results.csv
+python scripts/main.py --config configs/default.yaml
 ```
 
 ## 🧱 Add New Components
@@ -80,8 +79,9 @@ MIT
 - [x] DeepLIFT  
 - [x] WinIT / FIT  
 - [x] Dynamask / ExtrMask  
-- [ ] TimeX  
-- [ ] TimeX++  
+- [ ] SGT + GRAD
+- [ ] CoRTX
+- [ ] TimeX / TimeX++  
 - [ ] ORTE  
 - [ ] ContraLSP  
 - [ ] TimeSHAP / WindowSHAP  

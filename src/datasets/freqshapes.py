@@ -29,7 +29,7 @@ class FreqShape(BaseDataset):
 
         gt = None
         if 'gt_exps' in D and D['gt_exps'] is not None: # test GT is available
-            # idntify GT for training set or test set or val set based on shape
+            # identify GT for training set or test set or val set based on shape
             if D['gt_exps'].shape[1] == Xtr.shape[0]:
                 ge = _TNDtoNTD(D['gt_exps'])
                 gt = {'importance_train': ge}

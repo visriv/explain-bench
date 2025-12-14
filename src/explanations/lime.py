@@ -11,7 +11,7 @@ class LIMEExplainer(BaseExplainer):
 
     def explain(self, model, X):
         # crude sensitivity: perturb noise and measure change in logits for predicted class
-        logits0 = model.predict(X)  # predicted labels
+        # logits0 = model.predict_class(X)  # predicted labels
         # to get class-prob change, we call torch net directly
         net = model.torch_module()
         import torch
