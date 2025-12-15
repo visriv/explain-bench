@@ -93,7 +93,15 @@ MIT
 
 ## TODO:
 
-### [ ] Models
+### [ ] Classifiers
+- [x] LSTM
+- [x] Transformer  
+- [ ] GRU
+- [ ] TCN  
+
+
+
+### [ ] Explainers
 - [x] IG, Grad, LIME
 - [ ] GradShap  
 - [x] DeepLIFT  
@@ -104,7 +112,7 @@ MIT
 - [ ] TimeX / TimeX++  
 - [ ] ORTE  
 - [ ] ContraLSP  
-- [ ] TimeSHAP / WindowSHAP  
+- [ ] TimeSHAP 
 
 ---
 
@@ -115,7 +123,8 @@ MIT
 - [x] Comprehensiveness  
 - [x] Sufficiency  
 - [x] Accuracy  
-- [x] Cross Entropy 
+- [x] Cross Entropy
+- [ ] AUROC, F1 from Hugues et al.
 
 # Appendix
 
@@ -154,6 +163,8 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 
 | Dataset | Status | Web Source | Reference |
 |--------|:------:|------------|-----------|
+| UCR Archive 1|  🧪 In progress  | [link][ucr1-src] | [ref][ucr1-ref] |
+| UCR Archive 1 | 🧪 In progress  | [link][ucr2-src] | [ref][ucr2-ref] |
 | State |  ✅ Implemented  | [link][State-src] | [ref][State-ref] |
 | Switch-Feature | ✅ Implemented  | [link][Switch-src] | [ref][Switch-ref] |
 | FreqShapes | ✅ Implemented | [link][freqshape-src] | [ref][freqshape-ref] |
@@ -169,6 +180,8 @@ This page summarizes the synthetic and real‑world datasets used in **Explain�
 | Water      | ⏳ Planned     | [link][water-src]     | [ref][water-ref]     |
 
 <!-- Replace the placeholders below with real URLs/citations -->
+[ucr1-src]: https://www.cs.ucr.edu/%7Eeamonn/time_series_data_2018/
+[ucr2-src]: https://www.cs.ucr.edu/%7Eeamonn/time_series_data_2018/
 [State-src]: https://github.com/visriv/explain-bench/blob/main/src/datasets/datagen/state_data.py#
 [Switch-src]: https://github.com/visriv/explain-bench/blob/main/src/datasets/datagen/switch_data.py#
 [freqshape-src]: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/B0DEQJ# 
