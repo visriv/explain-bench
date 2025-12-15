@@ -55,6 +55,10 @@ For e.g., explain-bench/data/FreqShape/
 
 They can be either downloaded or generated synthetically. The source is mentioned in the WebSource column of the Table in Appendix > Dataset Tracking
 
+To generate a synthetic dataset (switch/datate/spike), run 
+```bash
+python src/datasets/datagen/switch_data.py
+```
 
 ## 🧠 Quickstart
 
