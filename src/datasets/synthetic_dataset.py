@@ -23,6 +23,9 @@ class SyntheticDataset(BaseDataset):
         return self._make(self.n_train), self._make(self.n_test)
     
 
+    def load_splits(self):
+        pass
+    
     def load_full(self) -> SplitData:
         (Xtr, ytr), (Xte, yte) = self.load()
         # simple 80/20 split of train as val

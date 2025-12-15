@@ -311,7 +311,7 @@ class Benchmark:
                 # Write the row in header order (fill missing keys with "")
                 with open(tsv_path, "a", encoding="utf-8") as f:
                     f.write("\t".join(str(flat_row.get(col, "")) for col in header) + "\n")
-                print('written metrics to {run_root}/{tsv_path}')
+                print(f"written metrics to {run_root}/{tsv_path}")
 
                 # Write to leaderboard
                 append_to_global_leaderboard(

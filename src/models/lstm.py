@@ -42,7 +42,7 @@ class LSTM(BaseModel):
                 loss.backward()
                 opt.step()
 
-    def predict(self, X):
+    def predict_class(self, X):
         self.net.eval()
         with torch.no_grad():
             X = torch.tensor(X, dtype=torch.float32, device=self.device)
