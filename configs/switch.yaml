@@ -16,32 +16,32 @@ dataset:
     # limit_test: null
 
 models:
-  # - name: "LSTM"
-  #   params:
-  #     input_dim: 3     # set to your D (features)
-  #     hidden_dim: 64
-  #     num_layers: 1
-  #     num_classes: 2   # set to your number of classes
-  #     lr: 1e-3
-  #     epochs: 500
-  #     patience: 100
-  #     early_stop: True
-  #     batch_size: 64
-  #   single_label: True
+  - name: "LSTM"
+    params:
+      input_dim: 3     # set to your D (features)
+      hidden_dim: 64
+      num_layers: 2
+      num_classes: 2   # set to your number of classes
+      lr: 1e-3
+      epochs: 500
+      patience: 200
+      early_stop: True
+      batch_size: 64
+    single_label: True
 
   - name: "Transformer"
     params:
       d_model: 64
       nhead: 4
-      num_layers: 1
+      num_layers: 2
       lr: 1e-3
-      epochs: 500
+      epochs: 200
       batch_size: 32
       patience: 100
       early_stop: True
 explainers: 
-  # - name: "Grad"
-  #   params:
+  - name: "Grad"
+    params:
   # - name: "IG"
   #   params:
   #     steps: 30

@@ -147,7 +147,7 @@ def model_dir_name(model) -> Tuple[str, Dict[str, Any]]:
     if "num_layers" in cfg: sub.append(f"L={cfg['num_layers']}")
     if "batch_size" in cfg: sub.append(f"bs={cfg['batch_size']}")
     if "lr"        in cfg: sub.append(f"lr={_short_float(cfg['lr'])}")
-    if "epochs"    in cfg: sub.append(f"ep={cfg['epochs']}")
+    # if "epochs"    in cfg: sub.append(f"ep={cfg['epochs']}")
     # optional: include in/out dims when present
     if "input_dim" in cfg and cfg["input_dim"]: sub.append(f"in={cfg['input_dim']}")
     if "num_classes" in cfg and cfg["num_classes"]: sub.append(f"out={cfg['num_classes']}")

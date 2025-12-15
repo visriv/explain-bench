@@ -68,22 +68,22 @@ explainers:
 metrics: 
   - name: "Faithfulness"
     params:
-      k_ratio: [0.2, 0.3, 0.4, 0.5]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Consistency"
     params:
-      # k_ratio: 0.2
+      # k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Stability"
     params:
-      # k_ratio: 0.2
+      # k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Comprehensiveness"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Sufficiency"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "Accuracy"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   - name: "CrossEntropy"
     params:
-      k_ratio: [0.1, 0.2, 0.3]
+      k_ratio: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]

@@ -19,7 +19,8 @@ class _LSTMNet(nn.Module):
 
 @Registry.register_model("LSTM")
 class LSTM(BaseModel):
-    def __init__(self, input_dim=6, hidden_dim=64, num_layers=1, num_classes=2, lr=1e-3, epochs=3, batch_size=64, device=None):
+    def __init__(self, input_dim=6, hidden_dim=64, num_layers=1, num_classes=2, lr=1e-3, epochs=3, batch_size=64, device=None,
+                 **kwargs):
         self.net = _LSTMNet(input_dim, hidden_dim, num_layers, num_classes)
         self.lr=float(lr); self.epochs=epochs; self.batch_size=batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
